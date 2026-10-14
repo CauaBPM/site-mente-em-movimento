@@ -8,6 +8,23 @@
  */
 import { registrarEvento } from './analytics';
 
+// Entrada escalonada: irmãos revelados juntos entram com 40 ms de diferença (máx. 160 ms).
+// O atraso vale só para a primeira entrada e é removido em seguida.
+const ESCALONAMENTO_MS = 40;
+const ESCALONAMENTO_MAX_MS = 160;
+document.querySelectorAll<HTMLElement>('[data-revelar]').forEach((el) => {
+  const irmaos = el.parentElement
+    ? [...el.parentElement.children].filter((c) => c.hasAttribute('data-revelar'))
+    : [];
+  const indice = irmaos.indexOf(el);
+  if (indice <= 0) return;
+  el.style.setProperty(
+    '--atraso',
+    `${Math.min(indice * ESCALONAMENTO_MS, ESCALONAMENTO_MAX_MS)}ms`,
+  );
+  el.addEventListener('transitionend', () => el.style.removeProperty('--atraso'), { once: true });
+});
+
 const alvos = document.querySelectorAll<HTMLElement | SVGElement>(
   '[data-revelar], .trajetoria[data-desenhar]',
 );

@@ -60,6 +60,10 @@ const { mensagem } = Astro.props;
     transform: translateY(-2px);
   }
 
+  .fab-whatsapp:active {
+    transform: scale(0.94);
+  }
+
   .fab-whatsapp:focus-visible {
     outline-offset: 4px;
   }
@@ -70,9 +74,9 @@ const { mensagem } = Astro.props;
     pointer-events: none;
     visibility: hidden;
     transition:
-      opacity var(--dur) var(--ease),
-      transform var(--dur) var(--ease),
-      visibility 0s linear var(--dur);
+      opacity 150ms var(--ease),
+      transform 150ms var(--ease),
+      visibility 0s linear 150ms;
   }
 
   @media print {

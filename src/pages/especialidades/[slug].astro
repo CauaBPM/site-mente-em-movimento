@@ -251,7 +251,7 @@ const secoes = [
         <ul class="relacionadas">
           {relacionadas.map((r) => (
             <li>
-              <a href={rotaEspecialidade(r.id)} class="relacionada">
+              <a href={rotaEspecialidade(r.id)} class="relacionada pressionavel">
                 <span class="relacionada-nome">{r.data.nome}</span>
                 <span class="relacionada-resumo">{r.data.resumo}</span>
                 <Icone nome="seta" class="relacionada-seta" />
@@ -570,7 +570,9 @@ const secoes = [
     background: var(--branco);
     text-decoration: none;
     color: var(--grafite);
-    transition: box-shadow var(--dur) var(--ease);
+    transition:
+      box-shadow var(--dur) var(--ease),
+      transform var(--dur) var(--ease);
   }
 
   .relacionada:hover {

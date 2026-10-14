@@ -132,6 +132,8 @@ for (const rota of await paginas()) {
         window.scrollTo(0, 0);
       });
       await pagina.waitForLoadState('networkidle');
+      // A captura de página inteira não renderiza seções com content-visibility fora da tela
+      await pagina.addStyleTag({ content: '* { content-visibility: visible !important; }' });
       const nome =
         (rota === '/' ? 'inicio' : rota.slice(1).replace(/\//g, '-')) + `-${largura}.png`;
       await pagina.screenshot({ path: join(RELATORIOS, nome), fullPage: true });

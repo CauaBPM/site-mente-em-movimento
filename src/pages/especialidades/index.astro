@@ -55,7 +55,7 @@ const site = Astro.site!;
         </div>
         <ul class="esp-lista">
           {g.itens.map((e) => (
-            <li class="esp-linha" data-revelar>
+            <li class="esp-linha pressionavel" data-revelar>
               <MarcadorArea rotulo={e.data.nome} />
               <h3>
                 <a href={rotaEspecialidade(e.id)}>{e.data.h1}</a>

@@ -136,6 +136,30 @@ export const inicio = {
     link: 'O que levar e outras orientações',
   },
 
+  /** Faixa de confiança (padrão "Confiança e autoridade"), sem números nem selos inventados. */
+  compromissos: {
+    titulo: 'Nossos compromissos',
+    itens: [
+      {
+        icone: 'escudo',
+        titulo: 'Sigilo profissional',
+        texto:
+          'O que é conversado em consulta é protegido pelo sigilo previsto nos códigos de ética.',
+      },
+      {
+        icone: 'clinica',
+        titulo: 'Ética',
+        texto: 'Seguimos as normas dos conselhos profissionais, sem promessas de resultado.',
+      },
+      {
+        icone: 'conteudos',
+        titulo: 'Evidências científicas',
+        texto: 'Avaliações e intervenções baseadas no conhecimento científico atual.',
+      },
+    ],
+    link: 'Conheça nossa abordagem',
+  },
+
   faq: {
     sobretitulo: 'Dúvidas',
     titulo: 'Perguntas *frequentes*',

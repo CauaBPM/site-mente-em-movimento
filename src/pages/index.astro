@@ -165,7 +165,11 @@ const dados = [
 
       <div class="esp-grade">
         {destaque && (
-          <article class="esp-destaque" data-revelar aria-labelledby="esp-destaque-titulo">
+          <article
+            class="esp-destaque pressionavel"
+            data-revelar
+            aria-labelledby="esp-destaque-titulo"
+          >
             <RedeCognitiva class="esp-rede" />
             <MarcadorArea rotulo={destaque.data.nome} tag="p" />
             <h3 id="esp-destaque-titulo">
@@ -325,6 +329,27 @@ const dados = [
           <Icone nome="seta" />
         </a>
       </p>
+
+      <div class="compromissos">
+        <h3 id="compromissos-titulo" class="compromissos-titulo">
+          {inicio.compromissos.titulo}
+        </h3>
+        <ul>
+          {inicio.compromissos.itens.map((c) => (
+            <li data-revelar>
+              <Icone nome={c.icone as 'escudo'} tamanho={28} />
+              <div>
+                <p class="compromisso-nome">{c.titulo}</p>
+                <p>{c.texto}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+        <a class="link-seta" href="/a-clinica">
+          {inicio.compromissos.link}
+          <Icone nome="seta" />
+        </a>
+      </div>
     </div>
   </section>
 
@@ -984,6 +1009,61 @@ const dados = [
 
   .passos-mais {
     margin-top: 1.5rem;
+  }
+
+  /* Faixa de confiança */
+  .compromissos {
+    margin-top: clamp(2.5rem, 2rem + 2vw, 3.5rem);
+    padding-top: 2rem;
+    border-top: 1px solid var(--linha);
+  }
+
+  .compromissos-titulo {
+    margin-bottom: 1.25rem;
+    font-family: var(--f-texto);
+    font-weight: 700;
+    font-size: var(--fs-sobretitulo);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--mare);
+  }
+
+  .compromissos ul {
+    display: grid;
+    gap: 1.25rem;
+    list-style: none;
+    padding: 0;
+    margin-bottom: 1rem;
+  }
+
+  @media (min-width: 900px) {
+    .compromissos ul {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 2rem;
+    }
+  }
+
+  .compromissos li {
+    display: flex;
+    gap: 0.875rem;
+    align-items: flex-start;
+  }
+
+  .compromissos li :global(.icone) {
+    flex: none;
+    color: var(--petroleo);
+  }
+
+  .compromisso-nome {
+    font-weight: 700;
+    color: var(--noturno);
+  }
+
+  .compromissos li p:not(.compromisso-nome) {
+    margin-top: 0.25rem;
+    font-size: var(--fs-pequeno);
+    line-height: 1.5;
+    color: var(--grafite);
   }
 
   /* ---------- 8. FAQ ---------- */

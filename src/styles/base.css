@@ -16,6 +16,8 @@ html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   scroll-padding-top: 1.5rem;
+  /* Foco não encoberto (WCAG 2.4.11): reserva o espaço do botão fixo do WhatsApp */
+  scroll-padding-bottom: 6rem;
   background: var(--branco);
 }
 
@@ -315,7 +317,28 @@ main > div.secao,
 }
 
 .botao:active {
-  transform: translateY(1px);
+  transform: scale(0.98);
+}
+
+/* Retorno visual ao toque: realce próprio no lugar do realce cinza padrão do celular */
+a,
+button,
+summary {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pressionavel {
+  transition: transform var(--dur) var(--ease);
+}
+
+.pressionavel:active,
+.js [data-revelar].pressionavel.visivel:active {
+  transform: scale(0.98);
+}
+
+/* Números de telefone e contagens com algarismos de largura fixa */
+.numeros {
+  font-variant-numeric: tabular-nums;
 }
 
 .botao-primario {
@@ -449,6 +472,7 @@ main > div.secao,
     transition:
       opacity var(--dur-l) var(--ease),
       transform var(--dur-l) var(--ease);
+    transition-delay: var(--atraso, 0ms);
   }
 
   .js [data-revelar].visivel {

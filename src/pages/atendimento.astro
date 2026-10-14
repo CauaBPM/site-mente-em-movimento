@@ -149,8 +149,8 @@ const indice = [
         <ul class="crise-contatos">
           {atendimento.crise.contatos.map((c) => (
             <li>
-              <a href={c.href}>
-                <span class="crise-numero">{c.numero}</span>
+              <a href={c.href} class="pressionavel">
+                <span class="crise-numero numeros">{c.numero}</span>
                 <span>
                   <strong>{c.nome}</strong>
                   <br />

@@ -286,6 +286,30 @@ const atual = (href: string) => caminho === href || caminho.startsWith(`${href}/
     overflow-y: auto;
   }
 
+  /* Entrada suave do menu; a saída é imediata (saída mais rápida que a entrada) */
+  @media (prefers-reduced-motion: no-preference) {
+    .menu-movel[open] {
+      animation: menu-entra var(--dur) var(--ease);
+    }
+
+    .menu-movel[open]::backdrop {
+      animation: menu-fundo var(--dur) var(--ease);
+    }
+  }
+
+  @keyframes menu-entra {
+    from {
+      opacity: 0;
+      transform: translateX(16px);
+    }
+  }
+
+  @keyframes menu-fundo {
+    from {
+      opacity: 0;
+    }
+  }
+
   .menu-movel::backdrop {
     background: rgb(19 48 74 / 0.4);
   }
