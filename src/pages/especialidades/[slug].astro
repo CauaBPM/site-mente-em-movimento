@@ -1,0 +1,604 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import CabecalhoPagina from '@/components/CabecalhoPagina.astro';
+import Icone from '@/components/Icone.astro';
+import MarcadorArea from '@/components/MarcadorArea.astro';
+import RedeCognitiva from '@/components/RedeCognitiva.astro';
+import FAQ from '@/components/FAQ.astro';
+import ChamadaWhatsApp from '@/components/ChamadaWhatsApp.astro';
+import CartaoProfissional from '@/components/CartaoProfissional.astro';
+import { clinica } from '@/content/clinica';
+import {
+  especialidadesPublicadas,
+  equipeConfirmada,
+  rotaEspecialidade,
+  type Especialidade,
+} from '@/lib/conteudo';
+import { whatsappLink, mensagemArea, telefoneHref } from '@/lib/whatsapp';
+import { breadcrumbs, medicalWebPage, pessoa } from '@/lib/dados-estruturados';
+
+export async function getStaticPaths() {
+  const especialidades = await especialidadesPublicadas();
+  return especialidades.map((especialidade) => ({
+    params: { slug: especialidade.id },
+    props: { especialidade },
+  }));
+}
+
+interface Props {
+  especialidade: Especialidade;
+}
+
+const { especialidade } = Astro.props;
+const { Content } = await render(especialidade);
+const d = especialidade.data;
+const site = Astro.site!;
+const caminho = rotaEspecialidade(especialidade.id);
+const mensagem = mensagemArea(d.termoWhatsApp);
+
+const todas = await especialidadesPublicadas();
+const relacionadas = d.relacionadas
+  .map((slug) => todas.find((e) => e.id === slug))
+  .filter((e): e is Especialidade => Boolean(e));
+
+const profissionais = (await equipeConfirmada()).filter((p) =>
+  p.data.areas.includes(especialidade.id as never),
+);
+
+const trilha = [
+  { nome: 'Início', caminho: '/' },
+  { nome: 'Especialidades', caminho: '/especialidades' },
+  { nome: d.nome, caminho },
+];
+
+const dados = [
+  breadcrumbs(site, trilha),
+  medicalWebPage(site, { nome: d.h1, descricao: d.seo.descricao, caminho, slug: especialidade.id }),
+  ...profissionais.map((p) => pessoa(site, p)),
+];
+
+const secoes = [
+  { id: 'o-que-e', titulo: 'O que é' },
+  { id: 'quando-procurar', titulo: 'Quando procurar' },
+  { id: 'o-que-oferecemos', titulo: 'O que a clínica oferece' },
+  { id: 'como-funciona', titulo: 'Como funciona' },
+  { id: 'para-quem', titulo: 'Para quem' },
+  { id: 'perguntas', titulo: 'Perguntas frequentes' },
+];
+---
+
+<BaseLayout
+  titulo={d.seo.titulo}
+  descricao={d.seo.descricao}
+  caminho={caminho}
+  dados={dados}
+  mensagemWhatsApp={mensagem}
+>
+  <CabecalhoPagina
+    h1={d.h1}
+    intro={d.resumo}
+    sobretitulo={d.consultaMedica ? 'Especialidade médica' : 'Especialidade'}
+    trilha={trilha}
+  >
+    <div class="grupo-botoes">
+      <a
+        class="botao botao-primario"
+        href={whatsappLink(mensagem)}
+        rel="noopener"
+        target="_blank"
+        data-evento="whatsapp"
+        data-origem={`especialidade-${especialidade.id}-abertura`}
+      >
+        <Icone nome="whatsapp" />
+        Agendar {d.nome.toLowerCase()} pelo WhatsApp
+      </a>
+      <a class="botao botao-secundario" href="#perguntas">
+        Perguntas frequentes
+      </a>
+    </div>
+  </CabecalhoPagina>
+
+  <div class="secao fundo-branco">
+    <div class="contem esp-layout">
+      <div class="esp-conteudo">
+        <section id="o-que-e" aria-labelledby="t-o-que-e" class="esp-secao">
+          <h2 id="t-o-que-e">O que é a {d.nome.toLowerCase()}</h2>
+          {especialidade.id === 'neuropsicologia' && <RedeCognitiva class="esp-rede" />}
+          <div class="texto prosa">
+            <Content />
+          </div>
+        </section>
+
+        <section id="quando-procurar" aria-labelledby="t-quando" class="esp-secao" data-revelar>
+          <h2 id="t-quando">Quando procurar</h2>
+          <p class="texto">{d.quandoProcurar.intro}</p>
+          <ul class="lista-marcada leve esp-sinais">
+            {d.quandoProcurar.sinais.map((s) => (
+              <li>{s}</li>
+            ))}
+          </ul>
+          <p class="esp-aviso">
+            <Icone nome="aviso" />
+            <span>{d.quandoProcurar.aviso}</span>
+          </p>
+        </section>
+
+        <section id="o-que-oferecemos" aria-labelledby="t-oferece" class="esp-secao" data-revelar>
+          <h2 id="t-oferece">O que a clínica oferece</h2>
+          <p class="texto">{d.oferece.intro}</p>
+          <div class="esp-blocos">
+            {d.oferece.blocos.map((b, i) => (
+              <div class:list={['esp-bloco', { 'esp-bloco-principal': i === 0 && b.itens }]}>
+                <h3>{b.titulo}</h3>
+                {b.texto && <p>{b.texto}</p>}
+                {b.itens && (
+                  <ul class="lista-marcada">
+                    {b.itens.map((item) => (
+                      <li>{item}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {profissionais.length > 0 && (
+          <section aria-labelledby="t-profissionais" class="esp-secao">
+            <h2 id="t-profissionais">Profissionais</h2>
+            <div class="esp-profissionais">
+              {profissionais.map((p) => (
+                <CartaoProfissional profissional={p} />
+              ))}
+            </div>
+          </section>
+        )}
+
+        <section id="como-funciona" aria-labelledby="t-como" class="esp-secao" data-revelar>
+          <h2 id="t-como">Como funciona</h2>
+          <ol class="esp-passos">
+            {d.comoFunciona.map((p) => (
+              <li>
+                <h3>{p.titulo}</h3>
+                <p>{p.texto}</p>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section id="para-quem" aria-labelledby="t-quem" class="esp-secao" data-revelar>
+          <h2 id="t-quem">Para quem</h2>
+          {d.publicos.status === 'confirmado' && d.publicos.lista.length > 0 && (
+            <ul class="esp-publicos">
+              {d.publicos.lista.map((p) => (
+                <li>{p}</li>
+              ))}
+            </ul>
+          )}
+          <p class="texto">{d.publicos.texto}</p>
+        </section>
+
+        <section id="perguntas" aria-labelledby="t-faq" class="esp-secao">
+          <h2 id="t-faq">Perguntas frequentes sobre {d.nome.toLowerCase()}</h2>
+          <FAQ perguntas={d.faq} />
+          <p class="esp-mais-faq">
+            <a class="link-seta" href="/atendimento#perguntas">
+              Outras dúvidas sobre o atendimento
+              <Icone nome="seta" />
+            </a>
+          </p>
+        </section>
+      </div>
+
+      <aside class="esp-lateral" aria-label="Agendamento e navegação">
+        <div class="esp-cartao">
+          <MarcadorArea rotulo={d.nome} tag="p" />
+          {d.consultaMedica && (
+            <p class="esp-medica">
+              <Icone nome="verificado" /> Consulta médica
+            </p>
+          )}
+          <p class="esp-cartao-texto">
+            Agende ou tire dúvidas sobre {d.nome.toLowerCase()} com a equipe.
+          </p>
+          <a
+            class="botao botao-primario"
+            href={whatsappLink(mensagem)}
+            rel="noopener"
+            target="_blank"
+            data-evento="whatsapp"
+            data-origem={`especialidade-${especialidade.id}-lateral`}
+          >
+            <Icone nome="whatsapp" />
+            WhatsApp
+          </a>
+          <a
+            class="link-seta"
+            href={telefoneHref}
+            data-evento="telefone"
+            data-origem={`especialidade-${especialidade.id}`}
+          >
+            <Icone nome="telefone" />
+            {clinica.telefone.exibicao}
+          </a>
+          <p class="pequeno">
+            {clinica.horario.texto}
+            <br />
+            {clinica.endereco.curto}
+          </p>
+        </div>
+        <nav class="esp-indice" aria-label="Nesta página">
+          <p class="esp-indice-titulo">Nesta página</p>
+          <ul>
+            {secoes.map((s) => (
+              <li>
+                <a href={`#${s.id}`}>{s.titulo}</a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </aside>
+    </div>
+  </div>
+
+  {relacionadas.length > 0 && (
+    <section class="secao-compacta fundo-nevoa" aria-labelledby="t-relacionadas">
+      <div class="contem">
+        <h2 id="t-relacionadas" class="h3">
+          Especialidades relacionadas
+        </h2>
+        <ul class="relacionadas">
+          {relacionadas.map((r) => (
+            <li>
+              <a href={rotaEspecialidade(r.id)} class="relacionada">
+                <span class="relacionada-nome">{r.data.nome}</span>
+                <span class="relacionada-resumo">{r.data.resumo}</span>
+                <Icone nome="seta" class="relacionada-seta" />
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  <ChamadaWhatsApp
+    titulo={`Quer agendar ou tirar dúvidas sobre *${d.nome.toLowerCase()}*?`}
+    texto="Fale com a equipe pelo WhatsApp. Não é preciso enviar informações de saúde por mensagem."
+    mensagem={mensagem}
+    origem={`especialidade-${especialidade.id}-final`}
+  />
+</BaseLayout>
+
+<style>
+  .esp-layout {
+    display: grid;
+    gap: 3rem;
+  }
+
+  @media (min-width: 1024px) {
+    .esp-layout {
+      grid-template-columns: minmax(0, 1fr) 300px;
+      gap: 5rem;
+      align-items: start;
+    }
+
+    .esp-lateral {
+      grid-column: 2;
+      grid-row: 1;
+      position: sticky;
+      top: 1.5rem;
+    }
+
+    .esp-conteudo {
+      grid-column: 1;
+      grid-row: 1;
+    }
+  }
+
+  .esp-lateral {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .esp-lateral {
+      display: grid;
+      gap: 1.5rem;
+    }
+  }
+
+  .esp-cartao {
+    display: grid;
+    gap: 1rem;
+    justify-items: start;
+    padding: 1.75rem;
+    border-radius: var(--raio-l);
+    background: var(--nevoa);
+  }
+
+  .esp-cartao .botao {
+    width: 100%;
+  }
+
+  .esp-cartao-texto {
+    font-weight: 600;
+    color: var(--noturno);
+    line-height: 1.45;
+  }
+
+  .esp-medica {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    font-size: var(--fs-pequeno);
+    color: var(--noturno);
+  }
+
+  .esp-medica :global(.icone) {
+    color: var(--mare);
+  }
+
+  .esp-indice {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .esp-indice {
+      display: block;
+      padding-left: 1.75rem;
+    }
+  }
+
+  .esp-indice-titulo {
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+    font-size: var(--fs-sobretitulo);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ardosia);
+  }
+
+  .esp-indice ul {
+    list-style: none;
+    padding: 0;
+    border-left: 2px solid var(--linha);
+  }
+
+  .esp-indice a {
+    display: flex;
+    align-items: center;
+    min-height: 40px;
+    padding-left: 1rem;
+    margin-left: -2px;
+    border-left: 2px solid transparent;
+    font-weight: 600;
+    font-size: var(--fs-pequeno);
+    color: var(--grafite);
+    text-decoration: none;
+  }
+
+  .esp-indice a:hover {
+    color: var(--petroleo);
+    border-left-color: var(--turquesa);
+  }
+
+  .esp-secao + .esp-secao {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 600px;
+    margin-top: clamp(3rem, 2.5rem + 2vw, 4.5rem);
+    padding-top: clamp(3rem, 2.5rem + 2vw, 4.5rem);
+    border-top: 1px solid var(--linha);
+  }
+
+  .esp-secao > h2 {
+    margin-bottom: 1.25rem;
+  }
+
+  :global(.esp-rede) {
+    width: 100%;
+    max-width: 520px;
+    height: auto;
+    margin-block: 0.5rem 1.75rem;
+  }
+
+  .prosa :global(p + p) {
+    margin-top: 1em;
+  }
+
+  .esp-sinais {
+    margin-block: 1.5rem;
+    max-width: var(--medida);
+  }
+
+  .esp-aviso {
+    display: flex;
+    gap: 0.875rem;
+    max-width: var(--medida);
+    padding: 1.125rem 1.25rem;
+    border-radius: var(--raio);
+    background: var(--nevoa);
+    font-weight: 600;
+    color: var(--noturno);
+  }
+
+  .esp-aviso :global(.icone) {
+    flex: none;
+    color: var(--petroleo);
+  }
+
+  .esp-blocos {
+    display: grid;
+    gap: 1.25rem;
+    margin-top: 1.75rem;
+  }
+
+  @media (min-width: 768px) {
+    .esp-blocos {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .esp-bloco-principal {
+      grid-row: span 2;
+    }
+  }
+
+  .esp-bloco {
+    padding: 1.75rem;
+    border-radius: var(--raio);
+    border: 1px solid var(--linha);
+  }
+
+  .esp-bloco-principal {
+    background: var(--linho);
+    border-color: transparent;
+  }
+
+  .esp-bloco h3 {
+    margin-bottom: 0.75rem;
+  }
+
+  .esp-bloco p + ul {
+    margin-top: 1.25rem;
+  }
+
+  .esp-passos {
+    display: grid;
+    gap: 0;
+    list-style: none;
+    padding: 0;
+    counter-reset: passo;
+    max-width: var(--medida);
+  }
+
+  .esp-passos li {
+    position: relative;
+    padding: 0 0 1.75rem 3.5rem;
+    counter-increment: passo;
+  }
+
+  .esp-passos li::before {
+    content: counter(passo);
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 2px solid var(--petroleo);
+    border-radius: 50%;
+    font-family: var(--f-titulo);
+    font-weight: 600;
+    color: var(--petroleo);
+    background: var(--branco);
+    z-index: 1;
+  }
+
+  .esp-passos li:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: calc(1.125rem - 1px);
+    top: 2.25rem;
+    bottom: 0;
+    width: 2px;
+    background: var(--bruma);
+  }
+
+  .esp-passos li:last-child {
+    padding-bottom: 0;
+  }
+
+  .esp-passos h3 {
+    font-size: 1.25rem;
+    padding-top: 0.25rem;
+  }
+
+  .esp-passos p {
+    margin-top: 0.375rem;
+  }
+
+  .esp-publicos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.625rem;
+    list-style: none;
+    padding: 0;
+    margin-bottom: 1.25rem;
+  }
+
+  .esp-publicos li {
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    background: var(--bruma);
+    font-weight: 700;
+    font-size: var(--fs-pequeno);
+    color: var(--noturno);
+  }
+
+  .esp-mais-faq {
+    margin-top: 1.25rem;
+  }
+
+  .esp-profissionais {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .relacionadas {
+    display: grid;
+    gap: 1rem;
+    list-style: none;
+    padding: 0;
+    margin-top: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .relacionadas {
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    }
+  }
+
+  .relacionada {
+    position: relative;
+    display: grid;
+    gap: 0.375rem;
+    height: 100%;
+    padding: 1.5rem 3.5rem 1.5rem 1.5rem;
+    border-radius: var(--raio);
+    background: var(--branco);
+    text-decoration: none;
+    color: var(--grafite);
+    transition: box-shadow var(--dur) var(--ease);
+  }
+
+  .relacionada:hover {
+    box-shadow: var(--sombra);
+    color: var(--grafite);
+  }
+
+  .relacionada-nome {
+    font-family: var(--f-titulo);
+    font-weight: 600;
+    font-size: 1.25rem;
+    color: var(--noturno);
+  }
+
+  .relacionada:hover .relacionada-nome {
+    color: var(--petroleo);
+    text-decoration: underline;
+  }
+
+  .relacionada-resumo {
+    font-size: var(--fs-pequeno);
+    line-height: 1.5;
+  }
+
+  :global(.relacionada-seta) {
+    position: absolute;
+    right: 1.25rem;
+    top: 1.5rem;
+    color: var(--petroleo);
+  }
+</style>

@@ -1,0 +1,39 @@
+{
+  "name": "site-mente-em-movimento",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Site institucional da Mente em Movimento – Centro de Saúde Mental e Cognitiva (Vila Velha – ES)",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "verificar": "node scripts/verificar-dist.mjs",
+    "test:a11y": "node scripts/testar-acessibilidade.mjs",
+    "gerar:imagens": "node scripts/gerar-imagens.mjs",
+    "qa": "npm run check && npm run lint && npm run build && npm run verificar"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.4",
+    "astro": "^7.3.8",
+    "sharp": "^0.35.5"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "axe-core": "^4.14.0",
+    "eslint": "^10.12.0",
+    "eslint-plugin-astro": "^3.2.1",
+    "playwright-core": "^1.64.1",
+    "prettier": "^3.9.10",
+    "prettier-plugin-astro": "^1.1.1",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.71.2"
+  }
+}

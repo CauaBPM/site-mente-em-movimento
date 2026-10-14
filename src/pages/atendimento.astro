@@ -1,0 +1,408 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import CabecalhoPagina from '@/components/CabecalhoPagina.astro';
+import Icone from '@/components/Icone.astro';
+import FAQ from '@/components/FAQ.astro';
+import ChamadaWhatsApp from '@/components/ChamadaWhatsApp.astro';
+import { atendimento } from '@/content/paginas/atendimento';
+import { faqPublicada } from '@/content/faq';
+import { whatsappLink, telefoneHref } from '@/lib/whatsapp';
+import { clinica } from '@/content/clinica';
+import { inline } from '@/lib/texto';
+import { breadcrumbs } from '@/lib/dados-estruturados';
+
+const trilha = [
+  { nome: 'Início', caminho: '/' },
+  { nome: 'Atendimento', caminho: '/atendimento' },
+];
+const site = Astro.site!;
+
+const indice = [
+  { id: 'como-agendar', titulo: 'Como agendar' },
+  { id: 'o-que-levar', titulo: 'O que levar' },
+  { id: 'sigilo', titulo: 'Sigilo e privacidade' },
+  { id: 'crise', titulo: 'Em situação de crise' },
+  { id: 'perguntas', titulo: 'Perguntas frequentes' },
+];
+---
+
+<BaseLayout
+  titulo={atendimento.seo.titulo}
+  descricao={atendimento.seo.descricao}
+  caminho="/atendimento"
+  dados={[breadcrumbs(site, trilha)]}
+>
+  <CabecalhoPagina
+    h1={atendimento.h1}
+    intro={atendimento.intro}
+    sobretitulo="Atendimento"
+    trilha={trilha}
+  >
+    <nav aria-label="Nesta página" class="indice">
+      <ul>
+        {indice.map((i) => (
+          <li>
+            <a href={`#${i.id}`}>{i.titulo}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </CabecalhoPagina>
+
+  <section class="secao-compacta fundo-branco" aria-label="Modalidade e públicos">
+    <div class="contem resumo">
+      <div class="resumo-item">
+        <Icone nome="clinica" tamanho={36} />
+        <h2 class="h3">{atendimento.modalidade.titulo}</h2>
+        <p>{atendimento.modalidade.texto}</p>
+      </div>
+      <div class="resumo-item">
+        <Icone nome="equipe" tamanho={36} />
+        <h2 class="h3">{atendimento.publicos.titulo}</h2>
+        <p>{atendimento.publicos.texto}</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="como-agendar" class="secao fundo-linho" aria-labelledby="agendar-titulo">
+    <div class="contem duas-colunas">
+      <div data-revelar>
+        <p class="sobretitulo">Passo a passo</p>
+        <h2 id="agendar-titulo">{atendimento.comoAgendar.titulo}</h2>
+        <div class="grupo-botoes agendar-botoes">
+          <a
+            class="botao botao-primario"
+            href={whatsappLink()}
+            rel="noopener"
+            target="_blank"
+            data-evento="whatsapp"
+            data-origem="atendimento-agendar"
+          >
+            <Icone nome="whatsapp" />
+            Agendar pelo WhatsApp
+          </a>
+          <a
+            class="botao botao-secundario"
+            href={telefoneHref}
+            data-evento="telefone"
+            data-origem="atendimento-agendar"
+          >
+            <Icone nome="telefone" />
+            {clinica.telefone.exibicao}
+          </a>
+        </div>
+      </div>
+      <div data-revelar>
+        <ol class="agendar-passos">
+          {atendimento.comoAgendar.passos.map((p) => (
+            <li>{p}</li>
+          ))}
+        </ol>
+        <p class="nota">
+          <Icone nome="escudo" />
+          <span>{atendimento.comoAgendar.observacao}</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="o-que-levar" class="secao fundo-branco" aria-labelledby="levar-titulo">
+    <div class="contem duas-colunas">
+      <div data-revelar>
+        <p class="sobretitulo">Primeira consulta</p>
+        <h2 id="levar-titulo">{atendimento.oQueLevar.titulo}</h2>
+      </div>
+      <ul class="checklist" data-revelar>
+        {atendimento.oQueLevar.itens.map((item) => (
+          <li>
+            <Icone nome="verificado" />
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section id="sigilo" class="secao-compacta fundo-nevoa" aria-labelledby="sigilo-titulo">
+    <div class="contem sigilo" data-revelar>
+      <Icone nome="escudo" tamanho={44} />
+      <div>
+        <h2 id="sigilo-titulo" class="h3">
+          {atendimento.sigilo.titulo}
+        </h2>
+        <div class="texto">
+          {atendimento.sigilo.texto.map((p) => (
+            <p set:html={inline(p)} />
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="crise" class="secao-compacta fundo-branco" aria-labelledby="crise-titulo">
+    <div class="contem">
+      <div class="crise">
+        <h2 id="crise-titulo" class="h3">
+          {atendimento.crise.titulo}
+        </h2>
+        <p>{atendimento.crise.texto}</p>
+        <ul class="crise-contatos">
+          {atendimento.crise.contatos.map((c) => (
+            <li>
+              <a href={c.href}>
+                <span class="crise-numero">{c.numero}</span>
+                <span>
+                  <strong>{c.nome}</strong>
+                  <br />
+                  {c.detalhe}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <p>{atendimento.crise.complemento}</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="perguntas" class="secao fundo-linho" aria-labelledby="faq-titulo">
+    <div class="contem duas-colunas">
+      <div>
+        <p class="sobretitulo">Dúvidas</p>
+        <h2 id="faq-titulo" set:html={inline(atendimento.faq.titulo)} />
+        <p class="faq-intro">{atendimento.faq.intro}</p>
+      </div>
+      <FAQ perguntas={faqPublicada} />
+    </div>
+  </section>
+
+  <ChamadaWhatsApp
+    titulo="Pronto para *agendar*?"
+    texto="Fale com a equipe pelo WhatsApp. Se não souber qual especialidade procurar, nós orientamos."
+    origem="atendimento-final"
+  />
+</BaseLayout>
+
+<style>
+  .indice ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+  }
+
+  .indice a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0.5rem 1rem;
+    border: 1.5px solid var(--petroleo);
+    border-radius: 999px;
+    background: var(--branco);
+    font-weight: 600;
+    font-size: var(--fs-pequeno);
+    text-decoration: none;
+  }
+
+  .indice a:hover {
+    background: var(--petroleo);
+    color: var(--branco);
+  }
+
+  .resumo {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .resumo {
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+    }
+  }
+
+  .resumo-item {
+    display: grid;
+    gap: 0.625rem;
+    align-content: start;
+  }
+
+  .resumo-item :global(.icone) {
+    color: var(--mare);
+    margin-bottom: 0.25rem;
+  }
+
+  .duas-colunas {
+    display: grid;
+    gap: 2rem;
+  }
+
+  @media (min-width: 1024px) {
+    .duas-colunas {
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+      gap: 5rem;
+      align-items: start;
+    }
+  }
+
+  .agendar-botoes {
+    margin-top: 2rem;
+  }
+
+  .agendar-passos {
+    display: grid;
+    gap: 1rem;
+    list-style: none;
+    padding: 0;
+    counter-reset: passo;
+  }
+
+  .agendar-passos li {
+    position: relative;
+    padding: 1.25rem 1.5rem 1.25rem 4.25rem;
+    border-radius: var(--raio);
+    background: var(--branco);
+    counter-increment: passo;
+    font-weight: 600;
+    color: var(--noturno);
+  }
+
+  .agendar-passos li::before {
+    content: counter(passo);
+    position: absolute;
+    left: 1.25rem;
+    top: 1.125rem;
+    display: grid;
+    place-items: center;
+    width: 2.125rem;
+    height: 2.125rem;
+    border-radius: 50%;
+    background: var(--petroleo);
+    color: var(--branco);
+    font-family: var(--f-titulo);
+    font-weight: 600;
+  }
+
+  .nota {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    color: var(--grafite);
+  }
+
+  .nota :global(.icone) {
+    flex: none;
+    color: var(--petroleo);
+  }
+
+  .checklist {
+    display: grid;
+    gap: 0;
+    list-style: none;
+    padding: 0;
+    border-top: 1px solid var(--linha);
+  }
+
+  .checklist li {
+    display: flex;
+    gap: 0.875rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--linha);
+    font-weight: 600;
+  }
+
+  .checklist :global(.icone) {
+    flex: none;
+    color: var(--mare);
+  }
+
+  .sigilo {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .sigilo {
+      grid-template-columns: auto 1fr;
+      gap: 2rem;
+    }
+  }
+
+  .sigilo > :global(.icone) {
+    color: var(--petroleo);
+  }
+
+  .sigilo .texto {
+    margin-top: 0.75rem;
+  }
+
+  .crise {
+    position: relative;
+    padding: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+    padding-left: clamp(1.75rem, 1.25rem + 2vw, 2.75rem);
+    border-radius: var(--raio-l);
+    border: 1.5px solid var(--linha);
+    overflow: hidden;
+  }
+
+  /* Faixa de destaque Damasco (detalhe pontual, sem texto) */
+  .crise::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    background: var(--damasco);
+  }
+
+  .crise > p {
+    margin-top: 0.75rem;
+    max-width: var(--medida);
+  }
+
+  .crise-contatos {
+    display: grid;
+    gap: 1rem;
+    list-style: none;
+    padding: 0;
+    margin-block: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .crise-contatos {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .crise-contatos a {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    min-height: 44px;
+    padding: 1rem 1.25rem;
+    border-radius: var(--raio);
+    background: var(--nevoa);
+    color: var(--grafite);
+    text-decoration: none;
+    line-height: 1.4;
+  }
+
+  .crise-contatos a:hover {
+    background: var(--bruma);
+    color: var(--grafite);
+  }
+
+  .crise-numero {
+    font-family: var(--f-titulo);
+    font-weight: 600;
+    font-size: 2.25rem;
+    line-height: 1;
+    color: var(--noturno);
+  }
+
+  .faq-intro {
+    margin-top: 1rem;
+  }
+</style>

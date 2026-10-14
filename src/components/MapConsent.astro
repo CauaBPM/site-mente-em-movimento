@@ -1,0 +1,103 @@
+---
+/**
+ * Mapa sob demanda: o iframe do Google Maps (e seus cookies) só é carregado
+ * depois que o visitante clica em "Carregar mapa".
+ */
+import Icone from './Icone.astro';
+import { clinica, enderecoCompleto } from '@/content/clinica';
+---
+
+<div class="mapa" data-mapa data-src={clinica.google.embed}>
+  <div class="mapa-aviso">
+    <span class="constelacao" aria-hidden="true"></span>
+    <span class="mapa-pino" aria-hidden="true">
+      <Icone nome="localizacao" tamanho={36} />
+    </span>
+    <p class="mapa-endereco">{enderecoCompleto}</p>
+    <button type="button" class="botao botao-secundario mapa-botao" data-mapa-carregar>
+      <Icone nome="mapa" />
+      Carregar mapa
+    </button>
+    <p class="pequeno mapa-nota">
+      O mapa é fornecido pelo Google, que pode coletar dados de navegação ao ser carregado.
+    </p>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-mapa]').forEach((mapa) => {
+    const botao = mapa.querySelector<HTMLButtonElement>('[data-mapa-carregar]');
+    botao?.addEventListener('click', () => {
+      const iframe = document.createElement('iframe');
+      iframe.src = mapa.dataset.src ?? '';
+      iframe.title = 'Mapa com a localização da Mente em Movimento, em Vila Velha – ES';
+      iframe.loading = 'lazy';
+      iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+      iframe.setAttribute('allowfullscreen', '');
+      mapa.replaceChildren(iframe);
+      mapa.classList.add('carregado');
+      iframe.focus();
+    });
+  });
+</script>
+
+<style>
+  .mapa {
+    position: relative;
+    overflow: hidden;
+    min-height: 340px;
+    height: 100%;
+    border-radius: var(--raio-l);
+    background: var(--bruma);
+  }
+
+  .mapa-aviso {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    height: 100%;
+    min-height: 340px;
+    padding: 2rem 1.5rem;
+    text-align: center;
+  }
+
+  .mapa-aviso > :not(.constelacao) {
+    position: relative;
+  }
+
+  .mapa-pino {
+    display: grid;
+    place-items: center;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--branco);
+    color: var(--petroleo);
+    box-shadow: var(--sombra);
+  }
+
+  .mapa-endereco {
+    max-width: 30ch;
+    font-weight: 600;
+    color: var(--noturno);
+  }
+
+  .mapa-botao {
+    background: var(--branco);
+  }
+
+  .mapa-nota {
+    max-width: 38ch;
+    color: var(--grafite);
+  }
+
+  .mapa :global(iframe) {
+    width: 100%;
+    height: 100%;
+    min-height: 340px;
+    border: 0;
+  }
+</style>

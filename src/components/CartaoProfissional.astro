@@ -1,0 +1,108 @@
+---
+/**
+ * Cartão de profissional — só é usado com profissionais "confirmado".
+ * Registro obrigatório: CRP-16 (psicólogos no ES); CRM-ES + RQE (médicos).
+ */
+import { Picture } from 'astro:assets';
+import type { Profissional } from '@/lib/conteudo';
+import { rotaEspecialidade } from '@/lib/conteudo';
+
+interface Props {
+  profissional: Profissional;
+  nivel?: 'h2' | 'h3';
+}
+const { profissional, nivel: Nivel = 'h3' } = Astro.props;
+const p = profissional.data;
+---
+
+<article class="profissional">
+  {p.foto && p.fotoAutorizada && (
+    <Picture
+      src={p.foto}
+      alt={p.fotoAlt ?? `Foto de ${p.nome}`}
+      widths={[240, 480]}
+      sizes="240px"
+      formats={['avif', 'webp']}
+      class="profissional-foto"
+      loading="lazy"
+    />
+  )}
+  <div>
+    <Nivel class="profissional-nome">{p.nome}</Nivel>
+    <p class="profissional-profissao">{p.profissao}</p>
+    <p class="profissional-registro">
+      {p.registro}
+      {p.rqe && <> · RQE {p.rqe}</>}
+    </p>
+    {p.formacao.length > 0 && (
+      <ul class="profissional-formacao">
+        {p.formacao.map((f) => (
+          <li>{f}</li>
+        ))}
+      </ul>
+    )}
+    {p.areas.length > 0 && (
+      <p class="pequeno">
+        Áreas:{' '}
+        {p.areas.map((a, i) => (
+          <>
+            {i > 0 && ', '}
+            <a href={rotaEspecialidade(a)}>{a.charAt(0).toUpperCase() + a.slice(1)}</a>
+          </>
+        ))}
+      </p>
+    )}
+    {p.publicos.length > 0 && <p class="pequeno">Atende: {p.publicos.join(', ')}</p>}
+  </div>
+</article>
+
+<style>
+  .profissional {
+    display: grid;
+    gap: 1.25rem;
+    padding: 1.75rem;
+    border-radius: var(--raio-l);
+    background: var(--linho);
+  }
+
+  @media (min-width: 600px) {
+    .profissional:has(.profissional-foto) {
+      grid-template-columns: 160px 1fr;
+      align-items: start;
+    }
+  }
+
+  .profissional :global(.profissional-foto) {
+    width: 160px;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: var(--raio);
+  }
+
+  .profissional-nome {
+    font-family: var(--f-titulo);
+    font-size: var(--fs-h3);
+  }
+
+  .profissional-profissao {
+    font-weight: 700;
+    color: var(--noturno);
+  }
+
+  .profissional-registro {
+    font-weight: 700;
+    font-size: var(--fs-pequeno);
+    letter-spacing: 0.04em;
+    color: var(--mare);
+  }
+
+  .profissional-formacao {
+    margin-block: 0.75rem;
+    padding-left: 1.25rem;
+    font-size: var(--fs-pequeno);
+  }
+
+  .profissional .pequeno {
+    margin-top: 0.375rem;
+  }
+</style>

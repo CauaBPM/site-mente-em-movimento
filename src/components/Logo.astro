@@ -1,0 +1,72 @@
+---
+/**
+ * LOGO — desenho original, sem nenhuma alteração.
+ * Arquivo único: src/assets/marca/logo.png (cópia de
+ * brand/03-Identidade-Visual/logo-arquivo-de-trabalho/logo-mm-fundo-nevoa.png, 717 × 450, fundo Névoa).
+ * Para trocar pelo original da clínica (SVG ou PNG ≥ 3000 px), substitua o arquivo
+ * mantendo o nome — ou altere apenas o import abaixo. Nada mais precisa mudar.
+ *
+ * Regras: não recortar, recolorir, distorcer nem aplicar sombra/filtro.
+ * Fundo permitido: Névoa, Branco ou Linho. Sobre fundo escuro, use `placa`.
+ * Largura mínima: 160 px (cabeçalho); 280 px quando o descritor precisar ser legível.
+ */
+import { Picture } from 'astro:assets';
+import arquivoLogo from '@/assets/marca/logo.png';
+
+interface Props {
+  /** Largura de exibição em px (mínimo 160). */
+  largura?: number;
+  /** Placa Névoa com respiro de ~6,5% da largura, para fundos escuros. */
+  placa?: boolean;
+  /** Carregar sem lazy-loading (cabeçalho). */
+  prioridade?: boolean;
+  class?: string;
+}
+
+const { largura = 180, placa = false, prioridade = false, class: classe } = Astro.props;
+const LARGURA_MINIMA = 160;
+const w = Math.max(LARGURA_MINIMA, largura);
+const h = Math.round((w * arquivoLogo.height) / arquivoLogo.width);
+const larguras = [...new Set([w, Math.min(w * 2, arquivoLogo.width)])];
+const respiro = Math.round(w * 0.065);
+---
+
+<span
+  class:list={['logo', { 'logo-placa': placa }, classe]}
+  style={`--logo-w: ${w}px; --respiro: ${respiro}px;`}
+>
+  <Picture
+    src={arquivoLogo}
+    alt="Mente em Movimento – Centro de Saúde Mental e Cognitiva"
+    width={w}
+    height={h}
+    widths={larguras}
+    sizes={`${w}px`}
+    formats={['avif', 'webp']}
+    fallbackFormat="png"
+    quality={90}
+    loading={prioridade ? 'eager' : 'lazy'}
+    fetchpriority={prioridade ? 'high' : undefined}
+    decoding="async"
+  />
+</span>
+
+<style>
+  .logo {
+    display: inline-block;
+    flex: none;
+    line-height: 0;
+  }
+
+  .logo :global(img) {
+    width: var(--logo-w);
+    height: auto;
+    aspect-ratio: 717 / 450;
+  }
+
+  .logo-placa {
+    padding: var(--respiro);
+    background: var(--nevoa);
+    border-radius: calc(var(--logo-w) * 0.05);
+  }
+</style>

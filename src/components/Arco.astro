@@ -1,0 +1,36 @@
+---
+/** Arco — grande círculo cortado pela borda, como fundo de seção. Decorativo. */
+interface Props {
+  /** Cor do arco */
+  cor?: 'bruma' | 'branco' | 'nevoa' | 'linho' | 'petroleo';
+  /** Diâmetro (CSS) */
+  tamanho?: string;
+  /** Posição (CSS): ex. "right: -20%; top: -30%" */
+  posicao?: string;
+  class?: string;
+}
+const {
+  cor = 'bruma',
+  tamanho = '80vw',
+  posicao = 'right: -25%; top: -20%',
+  class: classe,
+} = Astro.props;
+---
+
+<span
+  class:list={['arco', classe]}
+  style={`--arco-cor: var(--${cor}); --arco-tam: ${tamanho}; ${posicao}`}
+  aria-hidden="true"
+></span>
+
+<style>
+  .arco {
+    position: absolute;
+    width: var(--arco-tam);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--arco-cor);
+    pointer-events: none;
+    z-index: 0;
+  }
+</style>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 420" width="900" height="420">
+  <!-- Rede cognitiva: diagrama de nós e conexões para conteúdos científicos. Não usar como ícone da marca. -->
+  <g stroke="#1F6078" stroke-width="2" fill="none" opacity=".55">
+    <path d="M120 110 L330 60 L560 130 L780 80"/><path d="M330 60 L300 270 L560 130 L620 330"/><path d="M120 110 L300 270 L620 330 L780 80"/>
+  </g>
+  <g fill="#249C90"><circle cx="120" cy="110" r="12"/><circle cx="560" cy="130" r="12"/><circle cx="620" cy="330" r="12"/></g>
+  <g fill="#FFFFFF" stroke="#1F6078" stroke-width="3"><circle cx="330" cy="60" r="14"/><circle cx="300" cy="270" r="14"/><circle cx="780" cy="80" r="14"/></g>
+</svg>

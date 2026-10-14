@@ -1,0 +1,258 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import CabecalhoPagina from '@/components/CabecalhoPagina.astro';
+import Icone from '@/components/Icone.astro';
+import Trajetoria from '@/components/Trajetoria.astro';
+import Galeria from '@/components/Galeria.astro';
+import ChamadaWhatsApp from '@/components/ChamadaWhatsApp.astro';
+import { aClinica } from '@/content/paginas/a-clinica';
+import { clinica } from '@/content/clinica';
+import { inline } from '@/lib/texto';
+import { breadcrumbs } from '@/lib/dados-estruturados';
+
+const trilha = [
+  { nome: 'Início', caminho: '/' },
+  { nome: 'A clínica', caminho: '/a-clinica' },
+];
+const site = Astro.site!;
+---
+
+<BaseLayout
+  titulo={aClinica.seo.titulo}
+  descricao={aClinica.seo.descricao}
+  caminho="/a-clinica"
+  dados={[breadcrumbs(site, trilha)]}
+>
+  <CabecalhoPagina
+    h1={aClinica.h1}
+    intro={aClinica.intro}
+    sobretitulo={clinica.descritor}
+    trilha={trilha}
+  />
+
+  <!-- Propósito -->
+  <section class="secao fundo-branco" aria-labelledby="proposito-titulo">
+    <div class="contem proposito">
+      <p class="sobretitulo">{aClinica.proposito.sobretitulo}</p>
+      <h2 id="proposito-titulo" class="proposito-citacao">
+        “<em>{aClinica.proposito.citacao}</em>”
+      </h2>
+      <div class="texto proposito-texto" data-revelar>
+        {aClinica.proposito.texto.map((p) => (
+          <p>{p}</p>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Abordagem -->
+  <section class="secao fundo-linho" aria-labelledby="abordagem-titulo">
+    <div class="contem duas-colunas">
+      <div data-revelar>
+        <p class="sobretitulo">{aClinica.abordagem.sobretitulo}</p>
+        <h2 id="abordagem-titulo" set:html={inline(aClinica.abordagem.titulo)} />
+      </div>
+      <div data-revelar>
+        <div class="texto">
+          {aClinica.abordagem.texto.map((p) => (
+            <p>{p}</p>
+          ))}
+        </div>
+        <blockquote class="citacao-lateral">
+          <p>“{aClinica.abordagem.citacao}”</p>
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <!-- Públicos -->
+  <section class="secao fundo-branco" aria-labelledby="publicos-titulo">
+    <div class="contem">
+      <div class="cabecalho-secao" data-revelar>
+        <p class="sobretitulo">{aClinica.publicos.sobretitulo}</p>
+        <h2 id="publicos-titulo" set:html={inline(aClinica.publicos.titulo)} />
+      </div>
+      <div class="publicos-faixa" aria-hidden="true">
+        <Trajetoria variante="horizontal" />
+      </div>
+      <ul class="publicos">
+        {aClinica.publicos.itens.map((item) => (
+          <li data-revelar>
+            <h3>{item.titulo}</h3>
+            <p>{item.texto}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Compromissos -->
+  <section class="secao escuro" aria-labelledby="compromissos-titulo">
+    <span class="constelacao" aria-hidden="true"></span>
+    <div class="contem compromissos-interno">
+      <div class="cabecalho-secao" data-revelar>
+        <p class="sobretitulo">{aClinica.compromissos.sobretitulo}</p>
+        <h2 id="compromissos-titulo" set:html={inline(aClinica.compromissos.titulo)} />
+      </div>
+      <ul class="compromissos">
+        {aClinica.compromissos.itens.map((c) => (
+          <li data-revelar>
+            <Icone nome={c.icone as 'aviso'} tamanho={36} />
+            <h3>{c.titulo}</h3>
+            <p>{c.texto}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- O espaço -->
+  <section class="secao fundo-nevoa" aria-labelledby="espaco-titulo">
+    <div class="contem duas-colunas">
+      <div data-revelar>
+        <p class="sobretitulo">{aClinica.espaco.sobretitulo}</p>
+        <h2 id="espaco-titulo" set:html={inline(aClinica.espaco.titulo)} />
+      </div>
+      <div class="texto" data-revelar>
+        {aClinica.espaco.texto.map((p) => (
+          <p>{p}</p>
+        ))}
+        <p>
+          <a
+            class="link-seta"
+            href={clinica.google.rotas}
+            rel="noopener"
+            target="_blank"
+            data-evento="como-chegar"
+            data-origem="a-clinica"
+          >
+            Como chegar <Icone nome="externo" />
+          </a>
+        </p>
+      </div>
+    </div>
+    <div class="contem">
+      <Galeria />
+    </div>
+  </section>
+
+  <ChamadaWhatsApp
+    titulo="Venha nos *conhecer*"
+    texto="Atendimento com hora marcada, de segunda a sexta, das 8h às 18h30, na Praia das Gaivotas, em Vila Velha."
+    origem="a-clinica-final"
+  />
+</BaseLayout>
+
+<style>
+  .proposito {
+    text-align: center;
+    display: grid;
+    justify-items: center;
+  }
+
+  .proposito-citacao {
+    max-width: 20ch;
+    font-size: clamp(2rem, 1.4rem + 2.6vw, 3.5rem);
+    line-height: 1.12;
+  }
+
+  .proposito-texto {
+    margin-top: 2rem;
+    max-width: 60ch;
+    font-size: var(--fs-lead);
+  }
+
+  .duas-colunas {
+    display: grid;
+    gap: 2rem;
+  }
+
+  @media (min-width: 1024px) {
+    .duas-colunas {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 5rem;
+      align-items: start;
+    }
+  }
+
+  .citacao-lateral {
+    margin-top: 2rem;
+    padding-left: 1.5rem;
+    border-left: 3px solid var(--turquesa);
+    font-family: var(--f-titulo);
+    font-style: italic;
+    font-weight: 500;
+    font-size: var(--fs-h3);
+    line-height: 1.35;
+    color: var(--noturno);
+  }
+
+  .publicos-faixa {
+    margin-bottom: 1rem;
+  }
+
+  .publicos-faixa :global(.trajetoria) {
+    width: 100%;
+    height: auto;
+    max-height: 120px;
+  }
+
+  .publicos {
+    display: grid;
+    gap: 0;
+    list-style: none;
+    padding: 0;
+  }
+
+  .publicos li {
+    padding: 1.75rem 0;
+    border-top: 1px solid var(--linha);
+  }
+
+  .publicos li p {
+    margin-top: 0.5rem;
+    max-width: 48ch;
+  }
+
+  @media (min-width: 768px) {
+    .publicos {
+      grid-template-columns: 1fr 1fr;
+      column-gap: 3rem;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .publicos {
+      grid-template-columns: repeat(4, 1fr);
+      column-gap: 2rem;
+    }
+  }
+
+  .compromissos-interno {
+    position: relative;
+  }
+
+  .compromissos {
+    display: grid;
+    gap: 2.5rem;
+    list-style: none;
+    padding: 0;
+  }
+
+  @media (min-width: 900px) {
+    .compromissos {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3rem;
+    }
+  }
+
+  .compromissos :global(.icone) {
+    color: var(--bruma);
+    margin-bottom: 1rem;
+  }
+
+  .compromissos p {
+    margin-top: 0.5rem;
+    color: var(--bruma);
+  }
+</style>

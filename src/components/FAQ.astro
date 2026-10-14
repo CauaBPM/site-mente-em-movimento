@@ -1,0 +1,117 @@
+---
+/** Perguntas frequentes com <details>/<summary> (acessível sem JavaScript). */
+import { inline } from '@/lib/texto';
+
+interface Props {
+  perguntas: { pergunta: string; resposta: string; id?: string }[];
+  class?: string;
+}
+const { perguntas, class: classe } = Astro.props;
+---
+
+<div class:list={['faq', classe]}>
+  {perguntas.map((p) => (
+    <details class="faq-item" id={p.id ? `pergunta-${p.id}` : undefined}>
+      <summary>
+        <span class="faq-pergunta">{p.pergunta}</span>
+        <span class="faq-sinal" aria-hidden="true" />
+      </summary>
+      <div class="faq-resposta">
+        <p set:html={inline(p.resposta)} />
+      </div>
+    </details>
+  ))}
+</div>
+
+<style>
+  .faq {
+    border-top: 1px solid var(--linha);
+  }
+
+  .faq-item {
+    border-bottom: 1px solid var(--linha);
+  }
+
+  summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    min-height: 64px;
+    padding: 1.125rem 0;
+    cursor: pointer;
+    list-style: none;
+    border-radius: 6px;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-pergunta {
+    font-family: var(--f-titulo);
+    font-weight: 600;
+    font-size: clamp(1.125rem, 1.08rem + 0.2vw, 1.25rem);
+    line-height: 1.35;
+    color: var(--noturno);
+  }
+
+  summary:hover .faq-pergunta {
+    color: var(--petroleo);
+  }
+
+  .faq-sinal {
+    position: relative;
+    flex: none;
+    width: 36px;
+    height: 36px;
+    border: 1.5px solid var(--petroleo);
+    border-radius: 50%;
+    transition: background-color var(--dur) var(--ease);
+  }
+
+  .faq-sinal::before,
+  .faq-sinal::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 14px;
+    height: 2px;
+    margin: -1px 0 0 -7px;
+    border-radius: 2px;
+    background: var(--petroleo);
+    transition:
+      transform var(--dur) var(--ease),
+      background-color var(--dur) var(--ease);
+  }
+
+  .faq-sinal::after {
+    transform: rotate(90deg);
+  }
+
+  details[open] .faq-sinal {
+    background: var(--petroleo);
+  }
+
+  details[open] .faq-sinal::before,
+  details[open] .faq-sinal::after {
+    background: var(--branco);
+  }
+
+  details[open] .faq-sinal::after {
+    transform: rotate(0deg);
+  }
+
+  .faq-resposta {
+    padding: 0 3.5rem 1.5rem 0;
+    max-width: var(--medida);
+    color: var(--grafite);
+  }
+
+  @media (max-width: 600px) {
+    .faq-resposta {
+      padding-right: 0;
+    }
+  }
+</style>

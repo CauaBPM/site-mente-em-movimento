@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 240" width="1080" height="240">
+  <!-- Trajetória: linha fluida com nós. Traço 3 px a cada 1080 px de largura. Máx. 3 nós. -->
+  <path d="M-40 190 C180 190 260 70 460 80 S760 200 900 150 S1040 50 1120 60" fill="none" stroke="#249C90" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="460" cy="80" r="10" fill="#249C90"/>
+  <circle cx="900" cy="150" r="14" fill="#FFFFFF" stroke="#1F6078" stroke-width="3"/>
+</svg>

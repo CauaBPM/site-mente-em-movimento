@@ -1,0 +1,233 @@
+/* =====================================================================
+   MENTE EM MOVIMENTO — Sistema de identidade visual
+   Folha de estilos compartilhada por todos os templates (Instagram,
+   materiais institucionais, mockups e manual).
+   A logo NÃO é desenhada aqui: ela é sempre o arquivo original em
+   01-Logo-Original, apenas enquadrado (ver .logo).
+   ===================================================================== */
+
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400;1,8..60,500&display=swap");
+
+:root {
+  /* Principais — extraídas da logo */
+  --noturno:  #13304A;   /* figura central da borboleta */
+  --petroleo: #1F6078;   /* cérebro e peças em azul-petróleo */
+  /* Secundárias */
+  --mare:     #23767E;   /* turquesa escurecido p/ texto acessível */
+  --turquesa: #249C90;   /* peças em turquesa da logo */
+  /* Apoio / fundos */
+  --bruma:    #D6ECE9;
+  --nevoa:    #EEEFF1;   /* = fundo do arquivo da logo */
+  --linho:    #F5F1EA;
+  --branco:   #FFFFFF;
+  /* Texto */
+  --grafite:  #2E3236;
+  --ardosia:  #56636B;
+  --linha:    #D3DBDC;
+  /* Destaque (máx. 5% da área) */
+  --damasco:  #E39A6B;
+
+  --f-titulo: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --f-texto:  "Manrope", "Segoe UI", Arial, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: var(--branco); }
+body {
+  font-family: var(--f-texto);
+  color: var(--grafite);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+img { display: block; }
+
+/* ---------- Prancheta (cada peça) ---------- */
+.artboard {
+  position: relative;
+  overflow: hidden;
+  width: var(--aw, 1080px);
+  height: var(--ah, 1350px);
+}
+.feed    { --aw: 1080px; --ah: 1350px; }
+.square  { --aw: 1080px; --ah: 1080px; }
+.story   { --aw: 1080px; --ah: 1920px; }
+
+.bg-nevoa    { background: var(--nevoa); }
+.bg-linho    { background: var(--linho); }
+.bg-branco   { background: var(--branco); }
+.bg-bruma    { background: var(--bruma); }
+.bg-noturno  { background: var(--noturno);  color: var(--branco); }
+.bg-petroleo { background: var(--petroleo); color: var(--branco); }
+
+/* ---------- LOGO (desenho original, sem alteração) ----------
+   Usa 03-Identidade-Visual/logo-arquivo-de-trabalho/logo-mm-fundo-nevoa.png:
+   a captura original (717×450 px) com APENAS o fundo externo uniformizado
+   em Névoa (#EEEFF1), removendo o gradiente e o recorte circular do
+   Instagram. Desenho, proporção, tipografia e cores estão intactos.
+   Substituir pelo arquivo original em alta resolução assim que recebido. */
+.logo {
+  --w: 420px;
+  flex: none;
+  width: var(--w);
+  aspect-ratio: 717 / 450;
+}
+.logo img { width: 100%; height: 100%; }
+/* Placa: fundo Névoa (cor do próprio arquivo) para usar a logo
+   sobre fundos escuros ou fotografias, sem recolorir a marca.
+   Respiro = 1x (altura da caixa-alta do nome ≈ 6,5% da largura). */
+.plate {
+  display: inline-flex;
+  background: var(--nevoa);
+  padding: calc(var(--w, 420px) * 0.065);
+  border-radius: calc(var(--w, 420px) * 0.05);
+}
+
+/* ---------- Tipografia ---------- */
+.eyebrow {
+  font-family: var(--f-texto);
+  font-weight: 700;
+  font-size: 26px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--mare);
+}
+.bg-noturno .eyebrow, .bg-petroleo .eyebrow { color: var(--bruma); }
+
+.display {
+  font-family: var(--f-titulo);
+  font-weight: 600;
+  font-size: 92px;
+  line-height: 1.04;
+  letter-spacing: -0.015em;
+  color: var(--noturno);
+  font-optical-sizing: auto;
+}
+.h1 {
+  font-family: var(--f-titulo);
+  font-weight: 600;
+  font-size: 72px;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  color: var(--noturno);
+}
+.h2 {
+  font-family: var(--f-titulo);
+  font-weight: 600;
+  font-size: 48px;
+  line-height: 1.15;
+  color: var(--noturno);
+}
+.h3 {
+  font-family: var(--f-texto);
+  font-weight: 700;
+  font-size: 36px;
+  line-height: 1.25;
+  color: var(--noturno);
+}
+.bg-noturno :is(.display,.h1,.h2,.h3),
+.bg-petroleo :is(.display,.h1,.h2,.h3) { color: var(--branco); }
+.display em, .h1 em, .h2 em { font-style: italic; font-weight: 500; color: var(--petroleo); }
+.bg-noturno :is(.display,.h1,.h2) em,
+.bg-petroleo :is(.display,.h1,.h2) em { color: var(--bruma); }
+
+.lead {
+  font-family: var(--f-texto);
+  font-weight: 500;
+  font-size: 38px;
+  line-height: 1.42;
+  color: var(--grafite);
+}
+.body {
+  font-family: var(--f-texto);
+  font-weight: 500;
+  font-size: 32px;
+  line-height: 1.5;
+  color: var(--grafite);
+}
+.small {
+  font-family: var(--f-texto);
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 1.45;
+  color: var(--ardosia);
+}
+.bg-noturno :is(.lead,.body), .bg-petroleo :is(.lead,.body) { color: var(--branco); }
+.bg-noturno .small, .bg-petroleo .small { color: var(--bruma); }
+
+/* ---------- Marcador de área (especialidade) ---------- */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 26px 12px 20px;
+  border: 2px solid currentColor;
+  border-radius: 999px;
+  font-family: var(--f-texto);
+  font-weight: 700;
+  font-size: 24px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--petroleo);
+}
+.tag::before {
+  content: "";
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--turquesa);
+}
+.bg-noturno .tag, .bg-petroleo .tag { color: var(--bruma); }
+
+/* ---------- Grafismos ---------- */
+/* Arco: grande forma circular, sempre parcialmente fora da prancheta */
+.arco {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+/* Constelação: malha de pontos discreta para fundos */
+.constelacao {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, currentColor 2px, transparent 2.6px);
+  background-size: 40px 40px;
+  opacity: 0.14;
+}
+/* Trajetória: SVG inline (ver 03-Identidade-Visual/grafismos) */
+.trajetoria { position: absolute; pointer-events: none; overflow: visible; }
+
+/* ---------- Rodapé padrão das publicações ---------- */
+.rodape {
+  position: absolute;
+  left: 88px; right: 88px; bottom: 64px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--f-texto);
+  font-weight: 600;
+  font-size: 22px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ardosia);
+}
+.bg-noturno .rodape, .bg-petroleo .rodape { color: var(--bruma); }
+.rodape .pag { letter-spacing: 0.06em; }
+
+/* ---------- Área reservada para fotografia ---------- */
+.foto {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 90% at 30% 20%, rgba(255,255,255,.55), transparent 60%),
+    linear-gradient(160deg, #cfe3e0 0%, #b9d3d1 45%, #9fbfc2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.foto .foto-aviso {
+  display: flex; flex-direction: column; align-items: center; gap: 16px;
+  font-family: var(--f-texto); font-weight: 600; font-size: 24px;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: rgba(19,48,74,.62); text-align: center;
+}
+.foto .foto-aviso svg { width: 64px; height: 64px; }

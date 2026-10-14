@@ -1,0 +1,488 @@
+/* =====================================================================
+   BASE — reset, tipografia, utilitários e componentes globais
+   ===================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-padding-top: 1.5rem;
+  background: var(--branco);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  min-height: 100vh;
+  font-family: var(--f-texto);
+  font-weight: 500;
+  font-size: var(--fs-corpo);
+  line-height: 1.6;
+  color: var(--grafite);
+  background: var(--branco);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+
+img,
+svg,
+picture,
+video,
+iframe {
+  display: block;
+  max-width: 100%;
+}
+
+img {
+  height: auto;
+}
+
+input,
+button,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* ---------- Tipografia ---------- */
+h1,
+h2,
+h3,
+.h1,
+.h2,
+.h3 {
+  font-family: var(--f-titulo);
+  font-weight: 600;
+  color: var(--noturno);
+  text-wrap: balance;
+  font-optical-sizing: auto;
+}
+
+h1,
+.h1 {
+  font-size: var(--fs-h1);
+  line-height: 1.06;
+  letter-spacing: -0.015em;
+}
+
+h2,
+.h2 {
+  font-size: var(--fs-h2);
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+}
+
+h3,
+.h3 {
+  font-size: var(--fs-h3);
+  line-height: 1.25;
+}
+
+:is(h1, h2, h3, .h1, .h2, .h3, blockquote) em {
+  font-style: italic;
+  font-weight: 500;
+  color: var(--petroleo);
+}
+
+strong {
+  font-weight: 700;
+  color: var(--noturno);
+}
+
+.lead {
+  font-size: var(--fs-lead);
+  line-height: 1.5;
+  color: var(--grafite);
+  max-width: 58ch;
+}
+
+.pequeno {
+  font-size: var(--fs-pequeno);
+  line-height: 1.5;
+  color: var(--ardosia);
+}
+
+.sobretitulo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--f-texto);
+  font-weight: 700;
+  font-size: var(--fs-sobretitulo);
+  line-height: 1.3;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--mare);
+  margin-bottom: 1rem;
+}
+
+.sobretitulo::before {
+  content: '';
+  width: 1.75rem;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--turquesa);
+  flex: none;
+}
+
+.fundo-bruma .sobretitulo {
+  color: var(--petroleo);
+}
+
+.texto {
+  max-width: var(--medida);
+}
+
+.texto > * + * {
+  margin-top: 1em;
+}
+
+/* ---------- Links ---------- */
+a {
+  color: var(--petroleo);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  transition:
+    color var(--dur) var(--ease),
+    text-decoration-color var(--dur) var(--ease);
+}
+
+a:hover {
+  color: var(--noturno);
+  text-decoration-thickness: 2px;
+}
+
+.link-seta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.link-seta svg {
+  width: 1.125rem;
+  height: 1.125rem;
+  flex: none;
+  transition: transform var(--dur) var(--ease);
+}
+
+.link-seta:hover {
+  text-decoration: underline;
+}
+
+.link-seta:hover svg {
+  transform: translateX(3px);
+}
+
+/* ---------- Foco ---------- */
+:focus-visible {
+  outline: 3px solid var(--petroleo);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.escuro :focus-visible {
+  outline-color: var(--bruma);
+}
+
+/* ---------- Estrutura ---------- */
+.contem {
+  width: min(100% - 2 * var(--margem), var(--contem));
+  margin-inline: auto;
+}
+
+.secao {
+  position: relative;
+  padding-block: var(--secao);
+}
+
+/* Seções abaixo da dobra só são calculadas quando se aproximam da tela (desempenho) */
+main > section:not(:first-child),
+main > div.secao,
+.rodape {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 800px;
+}
+
+.secao-compacta {
+  padding-block: clamp(2.5rem, 2rem + 2.5vw, 4rem);
+}
+
+.fundo-branco {
+  background: var(--branco);
+}
+.fundo-nevoa {
+  background: var(--nevoa);
+}
+.fundo-linho {
+  background: var(--linho);
+}
+.fundo-bruma {
+  background: var(--bruma);
+}
+
+.escuro {
+  background: var(--noturno);
+  color: var(--branco);
+}
+
+.escuro :is(h1, h2, h3) {
+  color: var(--branco);
+}
+
+.escuro :is(h1, h2, h3, blockquote) em {
+  color: var(--bruma);
+}
+
+.escuro .sobretitulo {
+  color: var(--bruma);
+}
+
+.escuro a:not(.botao) {
+  color: var(--bruma);
+}
+
+.escuro a:not(.botao):hover {
+  color: var(--branco);
+}
+
+.escuro strong {
+  color: var(--branco);
+}
+
+.cabecalho-secao {
+  max-width: 44rem;
+  margin-bottom: clamp(2rem, 1.5rem + 2vw, 3.5rem);
+}
+
+.cabecalho-secao > p:not(.sobretitulo) {
+  margin-top: 1rem;
+}
+
+/* ---------- Botões ---------- */
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  min-height: 52px;
+  padding: 0.8125rem 1.5rem;
+  border: 2px solid transparent;
+  border-radius: 999px;
+  font-family: var(--f-texto);
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color var(--dur) var(--ease),
+    color var(--dur) var(--ease),
+    border-color var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+}
+
+.botao svg {
+  width: 1.375rem;
+  height: 1.375rem;
+  flex: none;
+}
+
+.botao:hover {
+  text-decoration: none;
+}
+
+.botao:active {
+  transform: translateY(1px);
+}
+
+.botao-primario {
+  background: var(--petroleo);
+  color: var(--branco);
+}
+
+.botao-primario:hover {
+  background: var(--noturno);
+  color: var(--branco);
+}
+
+.botao-secundario {
+  background: transparent;
+  border-color: var(--petroleo);
+  color: var(--petroleo);
+}
+
+.botao-secundario:hover {
+  background: var(--petroleo);
+  color: var(--branco);
+}
+
+.escuro .botao-primario {
+  background: var(--bruma);
+  color: var(--noturno);
+}
+
+.escuro .botao-primario:hover {
+  background: var(--branco);
+  color: var(--noturno);
+}
+
+.escuro .botao-secundario {
+  border-color: var(--bruma);
+  color: var(--bruma);
+}
+
+.escuro .botao-secundario:hover {
+  background: var(--bruma);
+  color: var(--noturno);
+}
+
+.grupo-botoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1rem;
+  align-items: center;
+}
+
+/* ---------- Listas ---------- */
+.lista-marcada {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.lista-marcada li {
+  position: relative;
+  padding-left: 1.75rem;
+  font-weight: 600;
+}
+
+.lista-marcada li::before {
+  content: '';
+  position: absolute;
+  left: 0.25rem;
+  top: 0.62em;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--turquesa);
+}
+
+.lista-marcada.leve li {
+  font-weight: 500;
+}
+
+/* ---------- Utilitários ---------- */
+.visualmente-oculto {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.pular-conteudo {
+  position: absolute;
+  left: 1rem;
+  top: -100px;
+  z-index: 100;
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--raio-s);
+  background: var(--noturno);
+  color: var(--branco);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.pular-conteudo:focus {
+  top: 1rem;
+  color: var(--branco);
+}
+
+/* Grafismo: constelação (malha de pontos, 6–16% de opacidade) */
+.constelacao {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, var(--petroleo) 1.6px, transparent 2.2px);
+  background-size: 32px 32px;
+  opacity: 0.1;
+}
+
+.escuro .constelacao {
+  background-image: radial-gradient(circle, var(--bruma) 1.6px, transparent 2.2px);
+  opacity: 0.08;
+}
+
+/* ---------- Animações (somente com movimento permitido e JS ativo) ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-revelar] {
+    opacity: 0;
+    transform: translateY(12px);
+    transition:
+      opacity var(--dur-l) var(--ease),
+      transform var(--dur-l) var(--ease);
+  }
+
+  .js [data-revelar].visivel {
+    opacity: 1;
+    transform: none;
+  }
+
+  .js .trajetoria[data-desenhar] .trajetoria-linha {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+
+  .js .trajetoria[data-desenhar].visivel .trajetoria-linha {
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset var(--dur-l) var(--ease);
+  }
+
+  .js .trajetoria[data-desenhar] .trajetoria-no {
+    opacity: 0;
+    transition: opacity var(--dur) var(--ease) 0.2s;
+  }
+
+  .js .trajetoria[data-desenhar].visivel .trajetoria-no {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

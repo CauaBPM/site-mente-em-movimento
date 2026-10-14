@@ -1,0 +1,65 @@
+---
+/**
+ * /equipe — página CONDICIONAL.
+ * Só é gerada quando há ao menos um profissional com status "confirmado"
+ * em src/content/equipe/. Sem profissionais, não existe página, link no menu
+ * nem entrada no sitemap.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import CabecalhoPagina from '@/components/CabecalhoPagina.astro';
+import CartaoProfissional from '@/components/CartaoProfissional.astro';
+import ChamadaWhatsApp from '@/components/ChamadaWhatsApp.astro';
+import { equipeConfirmada } from '@/lib/conteudo';
+import { breadcrumbs, pessoa } from '@/lib/dados-estruturados';
+
+export async function getStaticPaths() {
+  const equipe = await equipeConfirmada();
+  return equipe.length > 0 ? [{ params: { pagina: undefined } }] : [];
+}
+
+const equipe = await equipeConfirmada();
+const trilha = [
+  { nome: 'Início', caminho: '/' },
+  { nome: 'Equipe', caminho: '/equipe' },
+];
+const site = Astro.site!;
+---
+
+<BaseLayout
+  titulo="Equipe em Vila Velha | Mente em Movimento"
+  descricao="Conheça os profissionais da Mente em Movimento, em Vila Velha – ES, com formação e registro profissional."
+  caminho="/equipe"
+  dados={[breadcrumbs(site, trilha), ...equipe.map((p) => pessoa(site, p))]}
+>
+  <CabecalhoPagina
+    h1="Nossa *equipe*"
+    intro="Profissionais de diferentes áreas, trabalhando de forma integrada."
+    sobretitulo="Equipe"
+    trilha={trilha}
+  />
+  <section class="secao fundo-branco" aria-label="Profissionais">
+    <div class="contem equipe-grade">
+      {equipe.map((p) => (
+        <CartaoProfissional profissional={p} nivel="h2" />
+      ))}
+    </div>
+  </section>
+  <ChamadaWhatsApp
+    titulo="Agende sua *consulta*"
+    texto="Fale com a equipe pelo WhatsApp."
+    origem="equipe-final"
+  />
+</BaseLayout>
+
+<style>
+  .equipe-grade {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 900px) {
+    .equipe-grade {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>

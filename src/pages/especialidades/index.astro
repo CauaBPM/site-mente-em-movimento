@@ -1,0 +1,221 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import CabecalhoPagina from '@/components/CabecalhoPagina.astro';
+import Icone from '@/components/Icone.astro';
+import MarcadorArea from '@/components/MarcadorArea.astro';
+import ChamadaWhatsApp from '@/components/ChamadaWhatsApp.astro';
+import { inicio } from '@/content/paginas/inicio';
+import { especialidadesPublicadas, rotaEspecialidade } from '@/lib/conteudo';
+import { whatsappLink } from '@/lib/whatsapp';
+import { breadcrumbs } from '@/lib/dados-estruturados';
+
+const especialidades = await especialidadesPublicadas();
+const grupos = (['medica', 'mente-cognicao-aprendizagem'] as const)
+  .map((g) => ({
+    id: g,
+    titulo: inicio.especialidades.grupos[g],
+    descricao:
+      g === 'medica'
+        ? 'Consultas com médicos especialistas, para diagnóstico e acompanhamento.'
+        : 'Avaliação, terapia e apoio à aprendizagem, da infância à terceira idade.',
+    itens: especialidades.filter((e) => e.data.grupo === g),
+  }))
+  .filter((g) => g.itens.length > 0);
+
+const trilha = [
+  { nome: 'Início', caminho: '/' },
+  { nome: 'Especialidades', caminho: '/especialidades' },
+];
+const site = Astro.site!;
+---
+
+<BaseLayout
+  titulo="Especialidades em Vila Velha | Mente em Movimento"
+  descricao="Psiquiatria, neurologia, neuropsicologia, psicologia e psicopedagogia em Vila Velha – ES. Saiba quando procurar cada especialidade e como agendar."
+  caminho="/especialidades"
+  dados={[breadcrumbs(site, trilha)]}
+>
+  <CabecalhoPagina
+    h1="Especialidades em *Vila Velha*"
+    intro="Cinco áreas reunidas em um só endereço, na Praia das Gaivotas, para cuidar da saúde mental, da cognição e da aprendizagem em todas as idades."
+    sobretitulo="Especialidades"
+    trilha={trilha}
+  />
+
+  {grupos.map((g, gi) => (
+    <section
+      class:list={['secao', gi % 2 === 0 ? 'fundo-branco' : 'fundo-linho']}
+      aria-labelledby={`grupo-${g.id}`}
+    >
+      <div class="contem grupo-grade">
+        <div class="grupo-cabecalho" data-revelar>
+          <p class="sobretitulo">{g.itens.length} especialidades</p>
+          <h2 id={`grupo-${g.id}`}>{g.titulo}</h2>
+          <p>{g.descricao}</p>
+        </div>
+        <ul class="esp-lista">
+          {g.itens.map((e) => (
+            <li class="esp-linha" data-revelar>
+              <MarcadorArea rotulo={e.data.nome} />
+              <h3>
+                <a href={rotaEspecialidade(e.id)}>{e.data.h1}</a>
+              </h3>
+              <p>{e.data.resumo}</p>
+              <p class="esp-linha-sinais">
+                <span>Quando procurar: </span>
+                {`${e.data.quandoProcurar.sinais
+                  .slice(0, 2)
+                  .map((s) => s.charAt(0).toLowerCase() + s.slice(1).replace(/\.$/, ''))
+                  .join('; ')}; entre outros.`}
+              </p>
+              <span class="link-seta" aria-hidden="true">
+                Saiba mais
+                <Icone nome="seta" />
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  ))}
+
+  <section class="secao-compacta fundo-nevoa" aria-labelledby="duvida-titulo">
+    <div class="contem duvida" data-revelar>
+      <Icone nome="aviso" tamanho={40} />
+      <div>
+        <h2 id="duvida-titulo" class="h3">
+          Não sabe qual especialidade procurar?
+        </h2>
+        <p>
+          Conte para a equipe, em poucas palavras, para quem é o atendimento. Nós orientamos qual
+          profissional procurar primeiro. Não é preciso descrever sintomas por mensagem.
+        </p>
+      </div>
+      <a
+        class="botao botao-primario"
+        href={whatsappLink(inicio.porOndeComecar.mensagemWhatsApp)}
+        rel="noopener"
+        target="_blank"
+        data-evento="whatsapp"
+        data-origem="especialidades-orientacao"
+      >
+        <Icone nome="whatsapp" />
+        Pedir orientação
+      </a>
+    </div>
+  </section>
+
+  <ChamadaWhatsApp
+    titulo="Agende sua *consulta*"
+    texto="Atendimento presencial, de segunda a sexta, das 8h às 18h30, na Praia das Gaivotas, em Vila Velha."
+    origem="especialidades-final"
+  />
+</BaseLayout>
+
+<style>
+  .grupo-grade {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    .grupo-grade {
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr);
+      gap: 5rem;
+      align-items: start;
+    }
+
+    .grupo-cabecalho {
+      position: sticky;
+      top: 2rem;
+    }
+  }
+
+  .grupo-cabecalho p:last-child {
+    margin-top: 1rem;
+    max-width: 36ch;
+  }
+
+  .esp-lista {
+    list-style: none;
+    padding: 0;
+    border-top: 1px solid var(--linha);
+  }
+
+  .esp-linha {
+    position: relative;
+    display: grid;
+    gap: 0.75rem;
+    justify-items: start;
+    padding: 2rem 0;
+    border-bottom: 1px solid var(--linha);
+  }
+
+  .esp-linha h3 a {
+    color: var(--noturno);
+    text-decoration: none;
+  }
+
+  .esp-linha h3 a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .esp-linha h3 a:focus-visible {
+    outline: none;
+  }
+
+  .esp-linha h3 a:focus-visible::after {
+    outline: 3px solid var(--petroleo);
+    outline-offset: 4px;
+    border-radius: var(--raio-s);
+  }
+
+  .esp-linha:hover h3 a {
+    color: var(--petroleo);
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+  }
+
+  .esp-linha p {
+    max-width: var(--medida);
+  }
+
+  .esp-linha-sinais {
+    font-size: var(--fs-pequeno);
+    color: var(--ardosia);
+  }
+
+  .esp-linha-sinais span {
+    font-weight: 700;
+    color: var(--noturno);
+  }
+
+  .esp-linha .link-seta {
+    color: var(--petroleo);
+  }
+
+  .duvida {
+    display: grid;
+    gap: 1.25rem;
+    align-items: center;
+    justify-items: start;
+  }
+
+  .duvida > :global(.icone) {
+    color: var(--petroleo);
+  }
+
+  .duvida p {
+    margin-top: 0.5rem;
+    max-width: 60ch;
+  }
+
+  @media (min-width: 900px) {
+    .duvida {
+      grid-template-columns: auto 1fr auto;
+      gap: 2rem;
+    }
+  }
+</style>

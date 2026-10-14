@@ -1,0 +1,252 @@
+---
+import Logo from './Logo.astro';
+import Icone from './Icone.astro';
+import { clinica, confirmado } from '@/content/clinica';
+import { whatsappLink, telefoneHref } from '@/lib/whatsapp';
+import { especialidadesPublicadas, equipeConfirmada, rotaEspecialidade } from '@/lib/conteudo';
+
+const especialidades = await especialidadesPublicadas();
+const temEquipe = (await equipeConfirmada()).length > 0;
+const ano = new Date().getFullYear();
+---
+
+<footer class="rodape escuro" aria-labelledby="rodape-titulo">
+  <h2 id="rodape-titulo" class="visualmente-oculto">
+    Informações da clínica
+  </h2>
+  <div class="contem rodape-grade">
+    <div class="rodape-marca">
+      <a href="/" aria-label="Mente em Movimento – página inicial" class="rodape-logo">
+        <Logo largura={200} placa />
+      </a>
+      <p>
+        Centro de saúde mental e cognitiva em Vila Velha – ES. Psiquiatria, neurologia,
+        neuropsicologia, psicologia e psicopedagogia para todas as idades.
+      </p>
+    </div>
+
+    <div>
+      <h3 class="rodape-titulo">Contato</h3>
+      <ul class="rodape-lista">
+        <li>
+          <a
+            href={whatsappLink()}
+            rel="noopener"
+            target="_blank"
+            data-evento="whatsapp"
+            data-origem="rodape"
+          >
+            <Icone nome="whatsapp" />
+            WhatsApp {clinica.telefone.exibicao}
+          </a>
+        </li>
+        <li>
+          <a href={telefoneHref} data-evento="telefone" data-origem="rodape">
+            <Icone nome="telefone" />
+            Ligar {clinica.telefone.exibicao}
+          </a>
+        </li>
+        <li>
+          <a href={clinica.instagram.url} rel="noopener" target="_blank">
+            <Icone nome="instagram" />
+            Instagram {clinica.instagram.usuario}
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div>
+      <h3 class="rodape-titulo">Endereço e horário</h3>
+      <address class="rodape-endereco">
+        {clinica.endereco.logradouro}
+        <br />
+        {clinica.endereco.bairro}, {clinica.endereco.cidade} – {clinica.endereco.uf}
+        <br />
+        CEP {clinica.endereco.cep}
+      </address>
+      <p class="rodape-horario">
+        {clinica.horario.texto}
+        <br />
+        {clinica.horario.observacao}
+      </p>
+      <a
+        class="link-seta"
+        href={clinica.google.rotas}
+        rel="noopener"
+        target="_blank"
+        data-evento="como-chegar"
+        data-origem="rodape"
+      >
+        Como chegar <Icone nome="externo" />
+      </a>
+    </div>
+
+    <nav aria-label="Rodapé">
+      <h3 class="rodape-titulo">Navegação</h3>
+      <ul class="rodape-lista rodape-nav">
+        <li>
+          <a href="/a-clinica">A clínica</a>
+        </li>
+        <li>
+          <a href="/especialidades">Especialidades</a>
+        </li>
+        {especialidades.map((e) => (
+          <li class="sub">
+            <a href={rotaEspecialidade(e.id)}>{e.data.nome}</a>
+          </li>
+        ))}
+        {temEquipe && (
+          <li>
+            <a href="/equipe">Equipe</a>
+          </li>
+        )}
+        <li>
+          <a href="/atendimento">Atendimento</a>
+        </li>
+        <li>
+          <a href="/contato">Contato</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="contem rodape-crise">
+    <p>
+      <strong>Em situação de crise:</strong> ligue para o <a href="tel:188">CVV 188</a> (gratuito,
+      24 horas) ou para o <a href="tel:192">SAMU 192</a>.
+    </p>
+  </div>
+
+  <div class="contem rodape-legal">
+    <p>
+      © {ano} {clinica.razaoSocial} · CNPJ {clinica.cnpj}
+      {confirmado(clinica.cnes) && <> · CNES {clinica.cnes.valor}</>}
+    </p>
+    {confirmado(clinica.responsaveisTecnicos) && (
+      <p>
+        Responsáveis técnicos:{' '}
+        {clinica.responsaveisTecnicos.valor.map((r) => `${r.nome} (${r.registro})`).join(' · ')}
+      </p>
+    )}
+    <p>
+      <a href="/politica-de-privacidade">Política de Privacidade</a>
+    </p>
+  </div>
+</footer>
+
+<style>
+  .rodape {
+    padding-top: clamp(3.5rem, 2.5rem + 4vw, 5.5rem);
+    padding-bottom: 2rem;
+    font-size: var(--fs-pequeno);
+    line-height: 1.6;
+    color: var(--bruma);
+  }
+
+  .rodape-grade {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .rodape-grade {
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem 2.5rem;
+    }
+  }
+
+  @media (min-width: 1080px) {
+    .rodape-grade {
+      grid-template-columns: 1.3fr 1fr 1fr 0.9fr;
+    }
+  }
+
+  .rodape-marca p {
+    margin-top: 1.25rem;
+    max-width: 34ch;
+  }
+
+  .rodape-logo {
+    display: inline-block;
+    border-radius: 12px;
+  }
+
+  .rodape-titulo {
+    margin-bottom: 1rem;
+    font-family: var(--f-texto);
+    font-weight: 700;
+    font-size: var(--fs-sobretitulo);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--branco);
+  }
+
+  .rodape-lista {
+    list-style: none;
+    padding: 0;
+  }
+
+  .rodape-lista a,
+  .rodape .link-seta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    min-height: 44px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .rodape-lista a:hover,
+  .rodape .link-seta:hover {
+    text-decoration: underline;
+  }
+
+  .rodape-lista :global(.icone) {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex: none;
+  }
+
+  .rodape-nav a {
+    min-height: 40px;
+  }
+
+  .rodape-nav .sub a {
+    padding-left: 1rem;
+    font-weight: 500;
+  }
+
+  .rodape-endereco {
+    font-style: normal;
+  }
+
+  .rodape-horario {
+    margin-top: 0.75rem;
+  }
+
+  .rodape-crise {
+    margin-top: 3rem;
+    padding: 1.25rem 0;
+    border-top: 1px solid rgb(214 236 233 / 0.25);
+    border-bottom: 1px solid rgb(214 236 233 / 0.25);
+  }
+
+  .rodape-crise a {
+    font-weight: 700;
+  }
+
+  .rodape-legal {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem 2rem;
+    padding-top: 1.5rem;
+    font-size: 0.875rem;
+  }
+
+  .rodape-legal a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+</style>

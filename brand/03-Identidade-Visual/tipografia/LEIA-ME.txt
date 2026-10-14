@@ -1,0 +1,14 @@
+SISTEMA TIPOGRÁFICO — MENTE EM MOVIMENTO
+(as fontes da logo pertencem ao arquivo original e não são substituídas nem recriadas)
+
+1. Source Serif 4 (Google Fonts, licença SIL Open Font License)
+   Títulos e subtítulos de destaque. Pesos: Semibold 600 (títulos), Medium 500 Itálico (ênfase).
+   https://fonts.google.com/specimen/Source+Serif+4
+
+2. Manrope (Google Fonts, licença SIL Open Font License)
+   Textos corridos, subtítulos funcionais, sobretítulos, rodapés e informações complementares.
+   Pesos: Medium 500 (texto), SemiBold 600 (listas, rodapés), Bold 700 (sobretítulos em caixa-alta, +0,12 a 0,16em).
+   https://fonts.google.com/specimen/Manrope
+
+Alternativas de sistema (quando não for possível instalar): Georgia (títulos) e Arial/Segoe UI (texto).
+Tamanhos e hierarquia: ver o Manual (seção 09) e 06-Arquivos-Fonte/css/brand.css.

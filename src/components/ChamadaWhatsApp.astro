@@ -1,0 +1,93 @@
+---
+/** Bloco de chamada para o WhatsApp (fundo Bruma, com arco). */
+import Icone from './Icone.astro';
+import Arco from './Arco.astro';
+import { whatsappLink, telefoneHref } from '@/lib/whatsapp';
+import { clinica } from '@/content/clinica';
+import { inline } from '@/lib/texto';
+
+interface Props {
+  titulo: string;
+  texto: string;
+  mensagem?: string;
+  botao?: string;
+  origem: string;
+}
+
+const { titulo, texto, mensagem, botao = 'Agendar pelo WhatsApp', origem } = Astro.props;
+const id = `chamada-${origem}`;
+---
+
+<section class="chamada fundo-bruma" aria-labelledby={id}>
+  <Arco
+    cor="branco"
+    tamanho="clamp(360px, 52vw, 760px)"
+    posicao="right: -18%; top: -70%"
+    class="chamada-arco"
+  />
+  <div class="contem chamada-interno" data-revelar>
+    <div>
+      <h2 id={id} set:html={inline(titulo)} />
+      <p class="lead" set:html={inline(texto)} />
+    </div>
+    <div class="chamada-acoes">
+      <a
+        class="botao botao-primario"
+        href={whatsappLink(mensagem)}
+        rel="noopener"
+        target="_blank"
+        data-evento="whatsapp"
+        data-origem={origem}
+      >
+        <Icone nome="whatsapp" />
+        {botao}
+      </a>
+      <a class="link-seta" href={telefoneHref} data-evento="telefone" data-origem={origem}>
+        <Icone nome="telefone" />
+        Ou ligue: {clinica.telefone.exibicao}
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .chamada {
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(3.5rem, 2.5rem + 4vw, 6rem);
+  }
+
+  .chamada-interno {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 2rem;
+    align-items: end;
+  }
+
+  .chamada-interno .lead {
+    margin-top: 1rem;
+  }
+
+  .chamada-acoes {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  @media (min-width: 900px) {
+    .chamada-interno {
+      grid-template-columns: 1.5fr 1fr;
+      gap: 4rem;
+    }
+
+    .chamada-acoes {
+      align-items: flex-end;
+    }
+  }
+
+  :global(.chamada-arco) {
+    opacity: 0.55;
+  }
+</style>

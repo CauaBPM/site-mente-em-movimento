@@ -1,0 +1,98 @@
+---
+/**
+ * Trajetória — linha fluida com nós (brand/03-Identidade-Visual/grafismos/trajetoria-*.svg).
+ * Assinatura visual principal: no máximo UMA por seção. Nunca toca a logo nem atravessa texto.
+ */
+interface Props {
+  variante?: 'horizontal' | 'vertical' | 'canto';
+  /** Para fundos Noturno/Petróleo */
+  negativo?: boolean;
+  /** Desenha a linha uma única vez ao entrar na tela (respeita prefers-reduced-motion) */
+  desenhar?: boolean;
+  /** Acrescenta um nó Damasco (destaque pontual, ≤ 5% da área) */
+  destaque?: boolean;
+  class?: string;
+}
+
+const {
+  variante = 'horizontal',
+  negativo = false,
+  desenhar = true,
+  destaque = false,
+  class: classe,
+} = Astro.props;
+
+const formas = {
+  horizontal: {
+    viewBox: '0 0 1080 240',
+    d: 'M-40 190 C180 190 260 70 460 80 S760 200 900 150 S1040 50 1120 60',
+    cheio: { cx: 460, cy: 80, r: 10 },
+    vazado: { cx: 900, cy: 150, r: 14 },
+    damasco: { cx: 217.5, cy: 131.25, r: 7 },
+  },
+  vertical: {
+    viewBox: '0 0 240 1080',
+    d: 'M60 -40 C60 180 180 260 170 460 S50 760 90 900 S190 1040 180 1120',
+    cheio: { cx: 170, cy: 460, r: 10 },
+    vazado: { cx: 90, cy: 900, r: 14 },
+    damasco: { cx: 118.75, cy: 217.5, r: 7 },
+  },
+  canto: {
+    viewBox: '0 0 600 600',
+    d: 'M-20 560 C200 560 260 420 330 300 S460 60 620 40',
+    cheio: { cx: 330, cy: 300, r: 10 },
+    vazado: null,
+    damasco: { cx: 211.25, cy: 475, r: 7 },
+  },
+} as const;
+
+const f = formas[variante];
+---
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox={f.viewBox}
+  class:list={['trajetoria', `trajetoria-${variante}`, classe]}
+  data-desenhar={desenhar ? '' : undefined}
+  aria-hidden="true"
+  focusable="false"
+  overflow="visible"
+>
+  <path
+    class="trajetoria-linha"
+    d={f.d}
+    pathLength="1"
+    fill="none"
+    stroke="#249C90"
+    stroke-width="3"
+    stroke-linecap="round"
+    style="stroke-width: var(--traco, 3)"
+  ></path>
+  <circle
+    class="trajetoria-no"
+    cx={f.cheio.cx}
+    cy={f.cheio.cy}
+    r={f.cheio.r}
+    fill="#249C90"
+  ></circle>
+  {f.vazado && (
+    <circle
+      class="trajetoria-no"
+      cx={f.vazado.cx}
+      cy={f.vazado.cy}
+      r={f.vazado.r}
+      fill={negativo ? '#13304A' : '#FFFFFF'}
+      stroke={negativo ? '#D6ECE9' : '#1F6078'}
+      stroke-width="3"
+    />
+  )}
+  {destaque && (
+    <circle
+      class="trajetoria-no"
+      cx={f.damasco.cx}
+      cy={f.damasco.cy}
+      r={f.damasco.r}
+      fill="#E39A6B"
+    />
+  )}
+</svg>

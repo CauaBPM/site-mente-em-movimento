@@ -1,0 +1,1006 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Icone from '@/components/Icone.astro';
+import Trajetoria from '@/components/Trajetoria.astro';
+import Arco from '@/components/Arco.astro';
+import MarcadorArea from '@/components/MarcadorArea.astro';
+import RedeCognitiva from '@/components/RedeCognitiva.astro';
+import FAQ from '@/components/FAQ.astro';
+import Galeria from '@/components/Galeria.astro';
+import BlocoLocalizacao from '@/components/BlocoLocalizacao.astro';
+import { inicio } from '@/content/paginas/inicio';
+import { clinica } from '@/content/clinica';
+import { faqInicio } from '@/content/faq';
+import { especialidadesPublicadas, rotaEspecialidade } from '@/lib/conteudo';
+import { whatsappLink } from '@/lib/whatsapp';
+import { inline } from '@/lib/texto';
+import { medicalClinic } from '@/lib/dados-estruturados';
+
+const site = Astro.site!;
+const especialidades = await especialidadesPublicadas();
+const destaque = especialidades.find((e) => e.id === inicio.especialidades.destaque);
+const demais = especialidades.filter((e) => e.id !== inicio.especialidades.destaque);
+const grupos = (['medica', 'mente-cognicao-aprendizagem'] as const)
+  .map((g) => ({
+    id: g,
+    titulo: inicio.especialidades.grupos[g],
+    itens: demais.filter((e) => e.data.grupo === g),
+  }))
+  .filter((g) => g.itens.length > 0);
+
+const publicadas = new Set(especialidades.map((e) => e.id));
+
+const dados = [
+  medicalClinic(
+    site,
+    new URL('/og-image.png', site).href,
+    new URL('/logo-mente-em-movimento.png', site).href,
+  ),
+];
+---
+
+<BaseLayout titulo={inicio.seo.titulo} descricao={inicio.seo.descricao} caminho="/" dados={dados}>
+  <!-- 1. Abertura -->
+  <section class="hero fundo-nevoa" aria-labelledby="hero-titulo">
+    <div class="contem hero-grade">
+      <div class="hero-texto">
+        <p class="sobretitulo">{inicio.abertura.sobretitulo}</p>
+        <h1 id="hero-titulo" set:html={inline(inicio.abertura.titulo)} />
+        <p class="lead hero-sub">{inicio.abertura.subtitulo}</p>
+        <div class="grupo-botoes">
+          <a
+            class="botao botao-primario"
+            href={whatsappLink()}
+            rel="noopener"
+            target="_blank"
+            data-evento="whatsapp"
+            data-origem="abertura"
+          >
+            <Icone nome="whatsapp" />
+            {inicio.abertura.botaoPrimario}
+          </a>
+          <a class="botao botao-secundario" href="/especialidades">
+            {inicio.abertura.botaoSecundario}
+          </a>
+        </div>
+        <p class="hero-endereco">
+          <Icone nome="localizacao" />
+          {clinica.endereco.curto}
+        </p>
+      </div>
+
+      <div class="hero-visual" aria-hidden="true">
+        <div class="hero-arco">
+          <span class="constelacao"></span>
+          <Trajetoria variante="horizontal" class="hero-trajetoria" destaque />
+        </div>
+        <div class="hero-cartao">
+          <p class="hero-cartao-titulo">Especialidades</p>
+          <ul>
+            {clinica.especialidades.map((nome) => (
+              <li>
+                <MarcadorArea rotulo={nome} />
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Faixa de fatos -->
+  <section class="fatos" aria-label="A clínica em resumo">
+    <ul class="contem fatos-lista">
+      {inicio.fatos.map((f) => (
+        <li>
+          <Icone nome={f.icone as 'agenda'} tamanho={28} />
+          <span>{f.texto}</span>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <!-- 3. Por onde começar -->
+  <section class="secao fundo-branco" aria-labelledby="comecar-titulo">
+    <div class="contem comecar-grade">
+      <div class="comecar-intro" data-revelar>
+        <p class="sobretitulo">{inicio.porOndeComecar.sobretitulo}</p>
+        <h2 id="comecar-titulo" set:html={inline(inicio.porOndeComecar.titulo)} />
+        <p class="lead">{inicio.porOndeComecar.intro}</p>
+        <div class="comecar-aviso">
+          <Icone nome="aviso" tamanho={28} />
+          <div>
+            <p>{inicio.porOndeComecar.aviso}</p>
+            <a
+              class="link-seta"
+              href={whatsappLink(inicio.porOndeComecar.mensagemWhatsApp)}
+              rel="noopener"
+              target="_blank"
+              data-evento="whatsapp"
+              data-origem="por-onde-comecar"
+            >
+              {inicio.porOndeComecar.linkWhatsApp}
+              <Icone nome="seta" />
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <ol class="situacoes">
+        {inicio.porOndeComecar.situacoes.map((s, i) => (
+          <li class="situacao" data-revelar>
+            <span class="situacao-num" aria-hidden="true">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <div>
+              <h3>{s.titulo}</h3>
+              <p>{s.texto}</p>
+              <ul class="situacao-destinos" aria-label="Especialidades indicadas">
+                {s.destinos
+                  .filter((d) => publicadas.has(d.slug))
+                  .map((d) => (
+                    <li>
+                      <a class="link-seta" href={rotaEspecialidade(d.slug)}>
+                        {d.rotulo}
+                        <Icone nome="seta" />
+                      </a>
+                    </li>
+                  ))}
+              </ul>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- 4. Especialidades -->
+  <section class="secao fundo-linho" aria-labelledby="especialidades-titulo">
+    <div class="contem">
+      <div class="cabecalho-secao" data-revelar>
+        <p class="sobretitulo">{inicio.especialidades.sobretitulo}</p>
+        <h2 id="especialidades-titulo" set:html={inline(inicio.especialidades.titulo)} />
+        <p class="lead">{inicio.especialidades.intro}</p>
+      </div>
+
+      <div class="esp-grade">
+        {destaque && (
+          <article class="esp-destaque" data-revelar aria-labelledby="esp-destaque-titulo">
+            <RedeCognitiva class="esp-rede" />
+            <MarcadorArea rotulo={destaque.data.nome} tag="p" />
+            <h3 id="esp-destaque-titulo">
+              <a href={rotaEspecialidade(destaque.id)}>{destaque.data.resumo}</a>
+            </h3>
+            <ul class="lista-marcada">
+              {destaque.data.oferece.blocos.map((b) => (
+                <li>{b.titulo}</li>
+              ))}
+            </ul>
+            <span class="link-seta esp-destaque-link" aria-hidden="true">
+              Conhecer a {destaque.data.nome.toLowerCase()}
+              <Icone nome="seta" />
+            </span>
+          </article>
+        )}
+
+        <div class="esp-grupos">
+          {grupos.map((g) => (
+            <div class="esp-grupo" data-revelar>
+              <p class="esp-grupo-titulo">{g.titulo}</p>
+              <ul>
+                {g.itens.map((e) => (
+                  <li class="esp-item">
+                    <MarcadorArea rotulo={e.data.nome} />
+                    <p>{e.data.resumo}</p>
+                    <a
+                      class="link-seta esp-item-link"
+                      href={rotaEspecialidade(e.id)}
+                      aria-label={`Saiba mais sobre ${e.data.nome}`}
+                    >
+                      Saiba mais
+                      <Icone nome="seta" />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <p class="esp-todas" data-revelar>
+        <a class="botao botao-secundario" href="/especialidades">
+          {inicio.especialidades.linkTodas}
+        </a>
+      </p>
+    </div>
+  </section>
+
+  <!-- 5. Cuidado integrado -->
+  <section class="secao escuro integrado" aria-labelledby="integrado-titulo">
+    <span class="constelacao" aria-hidden="true"></span>
+    <div class="contem integrado-interno">
+      <div class="integrado-texto" data-revelar>
+        <p class="sobretitulo">{inicio.integrado.sobretitulo}</p>
+        <h2 id="integrado-titulo" set:html={inline(inicio.integrado.titulo)} />
+        <div class="texto">
+          {inicio.integrado.texto.map((p) => (
+            <p>{p}</p>
+          ))}
+        </div>
+      </div>
+
+      <div class="etapas" data-revelar>
+        <svg
+          class="etapas-linha etapas-linha-h"
+          viewBox="0 0 100 80"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M-2 62 C6 62 10 40 16.67 40 S36 66 50 40 S70 14 83.33 40 S96 52 102 46"
+            vector-effect="non-scaling-stroke"
+          ></path>
+        </svg>
+        <svg
+          class="etapas-linha etapas-linha-v"
+          viewBox="0 0 40 100"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M20 0 C20 15 12 20 12 33 S28 55 28 66 S20 90 20 100"
+            vector-effect="non-scaling-stroke"
+          ></path>
+        </svg>
+        <ol>
+          {inicio.integrado.etapas.map((e, i) => (
+            <li class="etapa">
+              <span class:list={['etapa-no', { 'etapa-no-vazado': i === 1 }]} aria-hidden="true" />
+              <div>
+                <h3>{e.titulo}</h3>
+                <p>{e.texto}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      <blockquote class="integrado-citacao" data-revelar>
+        <p>
+          <em>“{inicio.integrado.citacao}”</em>
+        </p>
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- 6. O espaço -->
+  <section class="secao fundo-branco espaco" aria-labelledby="espaco-titulo">
+    <div class="contem espaco-grade">
+      <div class="espaco-visual" aria-hidden="true">
+        <Arco cor="linho" tamanho="140%" posicao="left: -20%; top: 18%" />
+        <span class="constelacao"></span>
+        <p class="espaco-frase">“{clinica.proposito.frase}”</p>
+      </div>
+      <div class="espaco-texto" data-revelar>
+        <p class="sobretitulo">{inicio.espaco.sobretitulo}</p>
+        <h2 id="espaco-titulo" set:html={inline(inicio.espaco.titulo)} />
+        <div class="texto">
+          {inicio.espaco.texto.map((p) => (
+            <p>{p}</p>
+          ))}
+        </div>
+        <a class="link-seta" href="/a-clinica">
+          {inicio.espaco.link}
+          <Icone nome="seta" />
+        </a>
+      </div>
+    </div>
+    <div class="contem">
+      <Galeria />
+    </div>
+  </section>
+
+  <!-- 7. Como funciona -->
+  <section class="secao fundo-nevoa" aria-labelledby="como-titulo">
+    <div class="contem">
+      <div class="cabecalho-secao" data-revelar>
+        <p class="sobretitulo">{inicio.comoFunciona.sobretitulo}</p>
+        <h2 id="como-titulo" set:html={inline(inicio.comoFunciona.titulo)} />
+      </div>
+      <ol class="passos">
+        {inicio.comoFunciona.passos.map((p, i) => (
+          <li class="passo" data-revelar>
+            <span class="passo-num" aria-hidden="true">
+              {i + 1}
+            </span>
+            <h3>{p.titulo}</h3>
+            <p>{p.texto}</p>
+          </li>
+        ))}
+      </ol>
+      <p class="passos-mais">
+        <a class="link-seta" href="/atendimento">
+          {inicio.comoFunciona.link}
+          <Icone nome="seta" />
+        </a>
+      </p>
+    </div>
+  </section>
+
+  <!-- 8. Perguntas frequentes -->
+  <section class="secao fundo-branco" aria-labelledby="faq-titulo">
+    <div class="contem faq-grade">
+      <div data-revelar>
+        <p class="sobretitulo">{inicio.faq.sobretitulo}</p>
+        <h2 id="faq-titulo" set:html={inline(inicio.faq.titulo)} />
+        <a class="link-seta faq-link" href="/atendimento#perguntas">
+          {inicio.faq.link}
+          <Icone nome="seta" />
+        </a>
+      </div>
+      <FAQ perguntas={faqInicio} />
+    </div>
+  </section>
+
+  <!-- 9. Localização e contato -->
+  <section class="secao fundo-linho" aria-labelledby="local-titulo">
+    <div class="contem">
+      <div class="cabecalho-secao" data-revelar>
+        <p class="sobretitulo">{inicio.localizacao.sobretitulo}</p>
+        <h2 id="local-titulo" set:html={inline(inicio.localizacao.titulo)} />
+      </div>
+      <BlocoLocalizacao origem="inicio-localizacao" />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* ---------- 1. Abertura ---------- */
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding-top: clamp(2rem, 1rem + 4vw, 4.5rem);
+    padding-bottom: clamp(3.5rem, 2rem + 5vw, 6.5rem);
+  }
+
+  .hero-grade {
+    display: grid;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  @media (min-width: 1024px) {
+    .hero-grade {
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+      gap: clamp(2.5rem, 4vw, 5rem);
+    }
+  }
+
+  .hero-texto h1 {
+    max-width: 16ch;
+  }
+
+  .hero-sub {
+    margin-top: 1.5rem;
+  }
+
+  .hero-texto .grupo-botoes {
+    margin-top: 2rem;
+  }
+
+  .hero-endereco {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1.75rem;
+    font-weight: 600;
+    font-size: var(--fs-pequeno);
+    color: var(--ardosia);
+  }
+
+  .hero-endereco :global(.icone) {
+    color: var(--petroleo);
+  }
+
+  .hero-visual {
+    position: relative;
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .hero-visual {
+      display: block;
+      max-width: 560px;
+      width: 100%;
+      justify-self: end;
+    }
+  }
+
+  .hero-arco {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 4 / 4.4;
+    border-radius: 999px 999px var(--raio-l) var(--raio-l);
+    background: linear-gradient(180deg, var(--bruma) 0%, #e4f1ef 100%);
+  }
+
+  .hero-arco .constelacao {
+    opacity: 0.14;
+    mask-image: linear-gradient(180deg, transparent 5%, #000 45%);
+  }
+
+  :global(.hero-trajetoria) {
+    position: absolute;
+    left: -8%;
+    top: 22%;
+    width: 116%;
+    height: auto;
+    --traco: 3.5;
+  }
+
+  .hero-cartao {
+    position: absolute;
+    left: -2.5rem;
+    bottom: 2rem;
+    padding: 1.5rem 1.75rem;
+    border-radius: var(--raio);
+    background: var(--branco);
+    box-shadow: var(--sombra);
+  }
+
+  @media (max-width: 1023px) {
+    .hero-cartao {
+      left: 1.5rem;
+    }
+  }
+
+  .hero-cartao-titulo {
+    margin-bottom: 0.875rem;
+    font-weight: 700;
+    font-size: var(--fs-sobretitulo);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ardosia);
+  }
+
+  .hero-cartao ul {
+    display: grid;
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+  }
+
+  /* ---------- 2. Fatos ---------- */
+  .fatos {
+    border-bottom: 1px solid var(--linha);
+    background: var(--branco);
+  }
+
+  .fatos-lista {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    list-style: none;
+    padding-block: 1.5rem;
+    gap: 1.25rem 1.5rem;
+  }
+
+  .fatos-lista li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 600;
+    font-size: var(--fs-pequeno);
+    line-height: 1.35;
+    color: var(--noturno);
+  }
+
+  .fatos-lista :global(.icone) {
+    flex: none;
+    color: var(--mare);
+  }
+
+  @media (min-width: 560px) {
+    .fatos-lista {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .fatos-lista {
+      grid-template-columns: repeat(4, auto);
+      justify-content: space-between;
+      padding-block: 1.75rem;
+    }
+
+    .fatos-lista li + li {
+      padding-left: 1.5rem;
+      border-left: 1px solid var(--linha);
+    }
+  }
+
+  /* ---------- 3. Por onde começar ---------- */
+  .comecar-grade {
+    display: grid;
+    gap: 3rem;
+  }
+
+  @media (min-width: 1024px) {
+    .comecar-grade {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 5rem;
+      align-items: start;
+    }
+
+    .comecar-intro {
+      position: sticky;
+      top: 2rem;
+    }
+  }
+
+  .comecar-intro .lead {
+    margin-top: 1.25rem;
+  }
+
+  .comecar-aviso {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding: 1.25rem 1.5rem;
+    border-radius: var(--raio);
+    background: var(--nevoa);
+  }
+
+  .comecar-aviso :global(.icone) {
+    flex: none;
+    color: var(--petroleo);
+  }
+
+  .comecar-aviso p {
+    font-weight: 600;
+    color: var(--noturno);
+  }
+
+  .situacoes {
+    list-style: none;
+    padding: 0;
+    border-top: 1px solid var(--linha);
+  }
+
+  .situacao {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1.25rem;
+    padding: 1.75rem 0;
+    border-bottom: 1px solid var(--linha);
+  }
+
+  .situacao-num {
+    font-family: var(--f-titulo);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 1.5rem;
+    line-height: 1.2;
+    color: var(--mare);
+    min-width: 2.25rem;
+  }
+
+  .situacao h3 {
+    font-size: var(--fs-h3);
+  }
+
+  .situacao p {
+    margin-top: 0.5rem;
+    color: var(--grafite);
+  }
+
+  .situacao-destinos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1.5rem;
+    list-style: none;
+    padding: 0;
+    margin-top: 0.5rem;
+  }
+
+  /* ---------- 4. Especialidades ---------- */
+  .esp-grade {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    .esp-grade {
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+      gap: 2rem;
+      align-items: stretch;
+    }
+  }
+
+  .esp-destaque {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+    padding: clamp(1.75rem, 1rem + 3vw, 3rem);
+    border-radius: var(--raio-l);
+    background: var(--branco);
+    box-shadow: var(--sombra);
+    transition:
+      box-shadow var(--dur) var(--ease),
+      transform var(--dur) var(--ease);
+  }
+
+  .esp-destaque:hover {
+    box-shadow:
+      0 2px 4px rgb(19 48 74 / 0.06),
+      0 16px 40px rgb(19 48 74 / 0.1);
+  }
+
+  :global(.esp-rede) {
+    width: 100%;
+    max-width: 440px;
+    height: auto;
+    margin-bottom: 0.5rem;
+  }
+
+  .esp-destaque h3 {
+    font-size: clamp(1.5rem, 1.3rem + 0.9vw, 2rem);
+    line-height: 1.2;
+  }
+
+  .esp-destaque h3 a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* O cartão inteiro é clicável pelo link do título */
+  .esp-destaque h3 a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--raio-l);
+  }
+
+  .esp-destaque h3 a:focus-visible {
+    outline: none;
+  }
+
+  .esp-destaque h3 a:focus-visible::after {
+    outline: 3px solid var(--petroleo);
+    outline-offset: 3px;
+  }
+
+  .esp-destaque-link {
+    margin-top: auto;
+    color: var(--petroleo);
+  }
+
+  .esp-destaque:hover .esp-destaque-link {
+    text-decoration: underline;
+  }
+
+  .esp-grupos {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .esp-grupo {
+    padding: clamp(1.5rem, 1rem + 2vw, 2.25rem);
+    border-radius: var(--raio-l);
+    background: rgb(255 255 255 / 0.6);
+    border: 1px solid var(--linha);
+  }
+
+  .esp-grupo-titulo {
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+    font-size: var(--fs-sobretitulo);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ardosia);
+  }
+
+  .esp-grupo ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .esp-item {
+    display: grid;
+    gap: 0.625rem;
+    justify-items: start;
+    padding: 1.25rem 0;
+  }
+
+  .esp-item + .esp-item {
+    border-top: 1px solid var(--linha);
+  }
+
+  .esp-item:last-child {
+    padding-bottom: 0;
+  }
+
+  .esp-item-link {
+    min-height: 44px;
+  }
+
+  .esp-todas {
+    margin-top: 2.5rem;
+  }
+
+  /* ---------- 5. Cuidado integrado ---------- */
+  .integrado {
+    overflow: hidden;
+  }
+
+  .integrado-interno {
+    position: relative;
+    display: grid;
+    gap: clamp(2.5rem, 2rem + 3vw, 4.5rem);
+  }
+
+  .integrado-texto .texto {
+    margin-top: 1.25rem;
+    color: var(--bruma);
+  }
+
+  @media (min-width: 1024px) {
+    .integrado-texto {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 0 5rem;
+      align-items: end;
+    }
+
+    .integrado-texto .sobretitulo {
+      grid-column: 1 / -1;
+    }
+
+    .integrado-texto .texto {
+      margin-top: 0;
+    }
+  }
+
+  .etapas {
+    position: relative;
+  }
+
+  .etapas ol {
+    position: relative;
+    display: grid;
+    gap: 2.25rem;
+    list-style: none;
+    padding: 0;
+  }
+
+  .etapas-linha {
+    position: absolute;
+    fill: none;
+    stroke: var(--turquesa);
+    stroke-width: 3;
+    stroke-linecap: round;
+    overflow: visible;
+  }
+
+  .etapas-linha-h {
+    display: none;
+  }
+
+  .etapas-linha-v {
+    left: 0;
+    top: 0;
+    width: 40px;
+    height: 100%;
+  }
+
+  .etapa {
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    gap: 1.25rem;
+    align-items: start;
+  }
+
+  .etapa-no {
+    position: relative;
+    z-index: 1;
+    justify-self: center;
+    width: 22px;
+    height: 22px;
+    margin-top: 0.3rem;
+    border-radius: 50%;
+    background: var(--turquesa);
+  }
+
+  .etapa-no-vazado {
+    width: 30px;
+    height: 30px;
+    margin-top: 0;
+    background: var(--noturno);
+    border: 3px solid var(--bruma);
+  }
+
+  .etapa h3 {
+    font-size: var(--fs-h3);
+  }
+
+  .etapa p {
+    margin-top: 0.375rem;
+    color: var(--bruma);
+  }
+
+  @media (min-width: 768px) {
+    .etapas-linha-v {
+      display: none;
+    }
+
+    .etapas-linha-h {
+      display: block;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 80px;
+    }
+
+    .etapas ol {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0;
+    }
+
+    .etapa {
+      padding-inline: 1rem;
+      grid-template-columns: 1fr;
+      justify-items: center;
+      text-align: center;
+      gap: 0;
+    }
+
+    .etapa-no {
+      margin-top: 29px;
+      margin-bottom: 29px;
+    }
+
+    .etapa-no-vazado {
+      margin-top: 25px;
+      margin-bottom: 25px;
+    }
+
+    .etapa p {
+      max-width: 28ch;
+      margin-inline: auto;
+    }
+  }
+
+  .integrado-citacao {
+    max-width: 40ch;
+    font-family: var(--f-titulo);
+    font-size: clamp(1.375rem, 1.2rem + 0.9vw, 2rem);
+    line-height: 1.3;
+    color: var(--branco);
+  }
+
+  @media (min-width: 1024px) {
+    .integrado-citacao {
+      justify-self: center;
+      text-align: center;
+    }
+  }
+
+  /* ---------- 6. O espaço ---------- */
+  .espaco-grade {
+    display: grid;
+    gap: 2.5rem;
+    align-items: center;
+  }
+
+  @media (min-width: 900px) {
+    .espaco-grade {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 5rem;
+    }
+  }
+
+  .espaco-visual {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    min-height: 300px;
+    padding: clamp(1.75rem, 1rem + 3vw, 3rem);
+    border-radius: var(--raio-l) var(--raio-l) var(--raio-l) 999px;
+    background: var(--bruma);
+  }
+
+  @media (min-width: 900px) {
+    .espaco-visual {
+      min-height: 420px;
+    }
+  }
+
+  .espaco-frase {
+    position: relative;
+    z-index: 1;
+    max-width: 14ch;
+    margin-left: auto;
+    font-family: var(--f-titulo);
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(1.75rem, 1.4rem + 1.6vw, 2.75rem);
+    line-height: 1.15;
+    text-align: right;
+    color: var(--noturno);
+  }
+
+  .espaco-texto .texto {
+    margin-block: 1.25rem 1rem;
+  }
+
+  /* ---------- 7. Como funciona ---------- */
+  .passos {
+    display: grid;
+    gap: 1.25rem;
+    list-style: none;
+    padding: 0;
+    counter-reset: passo;
+  }
+
+  @media (min-width: 900px) {
+    .passos {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.5rem;
+    }
+  }
+
+  .passo {
+    position: relative;
+    padding: 1.75rem;
+    border-radius: var(--raio);
+    background: var(--branco);
+  }
+
+  .passo-num {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 1.25rem;
+    border: 2px solid var(--petroleo);
+    border-radius: 50%;
+    font-family: var(--f-titulo);
+    font-weight: 600;
+    font-size: 1.25rem;
+    color: var(--petroleo);
+  }
+
+  .passo:first-child .passo-num {
+    background: var(--petroleo);
+    color: var(--branco);
+  }
+
+  .passo p {
+    margin-top: 0.625rem;
+  }
+
+  .passos-mais {
+    margin-top: 1.5rem;
+  }
+
+  /* ---------- 8. FAQ ---------- */
+  .faq-grade {
+    display: grid;
+    gap: 2rem;
+  }
+
+  @media (min-width: 1024px) {
+    .faq-grade {
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+      gap: 5rem;
+      align-items: start;
+    }
+  }
+
+  .faq-link {
+    margin-top: 1rem;
+  }
+</style>

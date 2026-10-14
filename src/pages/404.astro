@@ -1,0 +1,116 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Icone from '@/components/Icone.astro';
+import Trajetoria from '@/components/Trajetoria.astro';
+import { especialidadesPublicadas, rotaEspecialidade } from '@/lib/conteudo';
+import { whatsappLink } from '@/lib/whatsapp';
+
+const especialidades = await especialidadesPublicadas();
+---
+
+<BaseLayout
+  titulo="Página não encontrada | Mente em Movimento"
+  descricao="A página procurada não existe. Veja as especialidades da Mente em Movimento, em Vila Velha – ES, ou fale com a equipe pelo WhatsApp."
+  caminho="/404"
+  noindex
+>
+  <section class="secao fundo-nevoa nao-encontrada" aria-labelledby="titulo-404">
+    <Trajetoria variante="canto" class="trajetoria-404" />
+    <div class="contem">
+      <p class="sobretitulo">Erro 404</p>
+      <h1 id="titulo-404">
+        Esta página <em>não foi encontrada</em>
+      </h1>
+      <p class="lead">
+        O endereço pode ter mudado ou ter sido digitado de outra forma. Estes caminhos podem ajudar:
+      </p>
+      <div class="grupo-botoes">
+        <a class="botao botao-primario" href="/">
+          Ir para o início
+        </a>
+        <a
+          class="botao botao-secundario"
+          href={whatsappLink()}
+          rel="noopener"
+          target="_blank"
+          data-evento="whatsapp"
+          data-origem="404"
+        >
+          <Icone nome="whatsapp" />
+          Falar pelo WhatsApp
+        </a>
+      </div>
+      <h2 class="h3 subtitulo-404">Páginas úteis</h2>
+      <ul class="links-404">
+        {especialidades.map((e) => (
+          <li>
+            <a class="link-seta" href={rotaEspecialidade(e.id)}>
+              {e.data.nome}
+              <Icone nome="seta" />
+            </a>
+          </li>
+        ))}
+        <li>
+          <a class="link-seta" href="/atendimento">
+            Atendimento e perguntas frequentes <Icone nome="seta" />
+          </a>
+        </li>
+        <li>
+          <a class="link-seta" href="/contato">
+            Contato e endereço <Icone nome="seta" />
+          </a>
+        </li>
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .nao-encontrada {
+    overflow: hidden;
+  }
+
+  .nao-encontrada .contem {
+    position: relative;
+  }
+
+  .nao-encontrada .lead {
+    margin-top: 1.25rem;
+  }
+
+  .nao-encontrada .grupo-botoes {
+    margin-top: 2rem;
+  }
+
+  .subtitulo-404 {
+    margin-top: 3rem;
+  }
+
+  .links-404 {
+    list-style: none;
+    padding: 0;
+    margin-top: 0.75rem;
+    display: grid;
+    gap: 0 2rem;
+  }
+
+  @media (min-width: 768px) {
+    .links-404 {
+      grid-template-columns: repeat(2, max-content);
+    }
+  }
+
+  :global(.trajetoria-404) {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: clamp(220px, 28vw, 380px);
+    height: auto;
+  }
+
+  @media (max-width: 1079px) {
+    :global(.trajetoria-404) {
+      display: none;
+    }
+  }
+</style>

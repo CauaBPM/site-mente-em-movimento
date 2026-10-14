@@ -1,0 +1,105 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import CabecalhoPagina from '@/components/CabecalhoPagina.astro';
+import Icone from '@/components/Icone.astro';
+import { privacidade } from '@/content/paginas/privacidade';
+import { config } from '@/lib/config';
+import { inline } from '@/lib/texto';
+import { breadcrumbs } from '@/lib/dados-estruturados';
+
+const trilha = [
+  { nome: 'Início', caminho: '/' },
+  { nome: 'Política de Privacidade', caminho: '/politica-de-privacidade' },
+];
+const site = Astro.site!;
+const secoes = privacidade.secoes.filter(
+  (s) => !('formulario' in s && s.formulario) || config.formularioAtivo,
+);
+const dataExtenso = new Date(`${privacidade.atualizadaEm}T12:00:00`).toLocaleDateString('pt-BR', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+---
+
+<BaseLayout
+  titulo={privacidade.seo.titulo}
+  descricao={privacidade.seo.descricao}
+  caminho="/politica-de-privacidade"
+  dados={[breadcrumbs(site, trilha)]}
+>
+  <CabecalhoPagina h1={privacidade.h1} sobretitulo="LGPD" trilha={trilha}>
+    <p class="atualizacao">
+      Última atualização: <time datetime={privacidade.atualizadaEm}>{dataExtenso}</time>
+    </p>
+  </CabecalhoPagina>
+
+  <section class="secao fundo-branco" aria-label="Texto da política">
+    <div class="contem politica">
+      {/* RASCUNHO: texto pendente de revisão por profissional jurídico (ver PENDENCIAS.md) */}
+      <p class="politica-aviso">
+        <Icone nome="escudo" />
+        <strong>{privacidade.aviso}</strong>
+      </p>
+      <ol class="politica-secoes">
+        {secoes.map((s) => (
+          <li>
+            <h2 class="h3">{s.titulo}</h2>
+            {s.paragrafos.map((p) => (
+              <p set:html={inline(p)} />
+            ))}
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .atualizacao {
+    margin-top: 1.25rem;
+    font-weight: 600;
+    color: var(--ardosia);
+  }
+
+  .politica {
+    max-width: 52rem;
+  }
+
+  .politica-aviso {
+    display: flex;
+    gap: 0.875rem;
+    padding: 1.25rem 1.5rem;
+    border-radius: var(--raio);
+    background: var(--bruma);
+    color: var(--noturno);
+  }
+
+  .politica-aviso :global(.icone) {
+    flex: none;
+    color: var(--petroleo);
+  }
+
+  .politica-secoes {
+    list-style: none;
+    padding: 0;
+    counter-reset: secao;
+    margin-top: 2.5rem;
+  }
+
+  .politica-secoes li {
+    counter-increment: secao;
+    padding-block: 1.75rem;
+    border-top: 1px solid var(--linha);
+  }
+
+  .politica-secoes h2::before {
+    content: counter(secao) '. ';
+    color: var(--mare);
+  }
+
+  .politica-secoes p {
+    margin-top: 0.75rem;
+    max-width: var(--medida);
+  }
+</style>

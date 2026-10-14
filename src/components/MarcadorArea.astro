@@ -1,0 +1,43 @@
+---
+/** Marcador de área (pílula com ponto turquesa) — identifica cada especialidade. */
+interface Props {
+  rotulo: string;
+  tag?: 'span' | 'p';
+  class?: string;
+}
+const { rotulo, tag: Tag = 'span', class: classe } = Astro.props;
+---
+
+<Tag class:list={['marcador', classe]}>{rotulo}</Tag>
+
+<style>
+  .marcador {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.375rem 0.95rem 0.375rem 0.75rem;
+    border: 1.5px solid currentColor;
+    border-radius: 999px;
+    font-family: var(--f-texto);
+    font-weight: 700;
+    font-size: var(--fs-sobretitulo);
+    line-height: 1.3;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--petroleo);
+    white-space: nowrap;
+  }
+
+  .marcador::before {
+    content: '';
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--turquesa);
+    flex: none;
+  }
+
+  :global(.escuro) .marcador {
+    color: var(--bruma);
+  }
+</style>

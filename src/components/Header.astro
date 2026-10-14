@@ -1,0 +1,352 @@
+---
+import Logo from './Logo.astro';
+import Icone from './Icone.astro';
+import { clinica } from '@/content/clinica';
+import { whatsappLink, telefoneHref } from '@/lib/whatsapp';
+import { equipeConfirmada } from '@/lib/conteudo';
+
+const temEquipe = (await equipeConfirmada()).length > 0;
+
+const links = [
+  { href: '/a-clinica', rotulo: 'A clínica' },
+  { href: '/especialidades', rotulo: 'Especialidades' },
+  ...(temEquipe ? [{ href: '/equipe', rotulo: 'Equipe' }] : []),
+  { href: '/atendimento', rotulo: 'Atendimento' },
+  { href: '/contato', rotulo: 'Contato' },
+];
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const caminho =
+  Astro.url.pathname
+    .replace(base, '')
+    .replace(/\.html$/, '')
+    .replace(/\/$/, '') || '/';
+const atual = (href: string) => caminho === href || caminho.startsWith(`${href}/`);
+---
+
+<header class="cabecalho">
+  <div class="contem cabecalho-interno">
+    <a href="/" class="cabecalho-logo" aria-label="Mente em Movimento – página inicial">
+      <Logo largura={184} prioridade />
+    </a>
+
+    <nav class="nav-principal" aria-label="Principal">
+      <ul>
+        {links.map((l) => (
+          <li>
+            <a href={l.href} aria-current={atual(l.href) ? 'page' : undefined}>
+              {l.rotulo}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="cabecalho-acoes">
+      <a
+        class="botao botao-primario cabecalho-cta"
+        href={whatsappLink()}
+        rel="noopener"
+        target="_blank"
+        data-evento="whatsapp"
+        data-origem="cabecalho"
+      >
+        <Icone nome="whatsapp" />
+        <span>Agendar pelo WhatsApp</span>
+      </a>
+      <button
+        type="button"
+        class="botao-menu"
+        aria-expanded="false"
+        aria-controls="menu-movel"
+        data-menu-abrir
+      >
+        <Icone nome="menu" tamanho={26} />
+        <span>Menu</span>
+      </button>
+    </div>
+  </div>
+
+  <dialog id="menu-movel" class="menu-movel" aria-label="Menu">
+    <div class="menu-movel-topo">
+      <span class="menu-movel-titulo" aria-hidden="true">
+        Menu
+      </span>
+      <button type="button" class="botao-menu" data-menu-fechar>
+        <Icone nome="fechar" tamanho={26} />
+        <span>Fechar</span>
+      </button>
+    </div>
+    <nav aria-label="Principal (celular)">
+      <ul class="menu-movel-links">
+        <li>
+          <a href="/" aria-current={caminho === '/' ? 'page' : undefined}>
+            Início
+          </a>
+        </li>
+        {links.map((l) => (
+          <li>
+            <a href={l.href} aria-current={atual(l.href) ? 'page' : undefined}>
+              {l.rotulo}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+    <div class="menu-movel-contato">
+      <a
+        class="botao botao-primario"
+        href={whatsappLink()}
+        rel="noopener"
+        target="_blank"
+        data-evento="whatsapp"
+        data-origem="menu"
+      >
+        <Icone nome="whatsapp" />
+        Agendar pelo WhatsApp
+      </a>
+      <a class="link-seta" href={telefoneHref} data-evento="telefone" data-origem="menu">
+        <Icone nome="telefone" />
+        Ligar: {clinica.telefone.exibicao}
+      </a>
+      <p class="pequeno">
+        {clinica.horario.texto}
+        <br />
+        {clinica.endereco.curto}
+      </p>
+    </div>
+  </dialog>
+</header>
+
+<script>
+  const dialogo = document.getElementById('menu-movel') as HTMLDialogElement | null;
+  const abrir = document.querySelector<HTMLButtonElement>('[data-menu-abrir]');
+  const fechar = document.querySelector<HTMLButtonElement>('[data-menu-fechar]');
+
+  if (dialogo && abrir && fechar) {
+    abrir.addEventListener('click', () => {
+      dialogo.showModal();
+      abrir.setAttribute('aria-expanded', 'true');
+      document.documentElement.classList.add('menu-aberto');
+    });
+    fechar.addEventListener('click', () => dialogo.close());
+    // Esc fecha nativamente (evento "close"); clique fora do painel também fecha
+    dialogo.addEventListener('click', (e) => {
+      if (e.target === dialogo) dialogo.close();
+    });
+    dialogo.addEventListener('close', () => {
+      abrir.setAttribute('aria-expanded', 'false');
+      document.documentElement.classList.remove('menu-aberto');
+      abrir.focus();
+    });
+    // Ao navegar para âncoras da mesma página, fecha o menu
+    dialogo
+      .querySelectorAll('a')
+      .forEach((a) => a.addEventListener('click', () => dialogo.close()));
+    // Se a janela crescer até o layout de desktop, fecha o menu
+    matchMedia('(min-width: 1080px)').addEventListener('change', (e) => {
+      if (e.matches && dialogo.open) dialogo.close();
+    });
+  }
+</script>
+
+<style>
+  .cabecalho {
+    position: relative;
+    z-index: 20;
+    background: var(--nevoa);
+  }
+
+  .cabecalho-interno {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-block: 0.5rem;
+  }
+
+  .cabecalho-logo {
+    display: block;
+    border-radius: var(--raio-s);
+  }
+
+  @media (max-width: 767px) {
+    .cabecalho-logo :global(.logo) {
+      --logo-w: 160px !important;
+    }
+  }
+
+  .nav-principal {
+    display: none;
+  }
+
+  .nav-principal ul {
+    display: flex;
+    gap: 0.25rem;
+    list-style: none;
+    padding: 0;
+  }
+
+  .nav-principal a {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0.5rem 0.875rem;
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--noturno);
+    text-decoration: none;
+    border-radius: var(--raio-s);
+  }
+
+  .nav-principal a::after {
+    content: '';
+    position: absolute;
+    left: 0.875rem;
+    right: 0.875rem;
+    bottom: 0.375rem;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--turquesa);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur) var(--ease);
+  }
+
+  .nav-principal a:hover::after,
+  .nav-principal a[aria-current='page']::after {
+    transform: scaleX(1);
+  }
+
+  .nav-principal a[aria-current='page'] {
+    color: var(--petroleo);
+  }
+
+  .cabecalho-acoes {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .cabecalho-cta {
+    display: none;
+    min-height: 48px;
+    padding-inline: 1.25rem;
+    font-size: 0.9375rem;
+  }
+
+  .botao-menu {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 48px;
+    min-width: 48px;
+    padding: 0.5rem 1rem 0.5rem 0.75rem;
+    border: 2px solid var(--petroleo);
+    border-radius: 999px;
+    background: var(--branco);
+    color: var(--petroleo);
+    font-weight: 700;
+    font-size: 0.9375rem;
+  }
+
+  .botao-menu:hover {
+    background: var(--petroleo);
+    color: var(--branco);
+  }
+
+  @media (min-width: 768px) {
+    .cabecalho-cta {
+      display: inline-flex;
+    }
+  }
+
+  @media (min-width: 1080px) {
+    .nav-principal {
+      display: block;
+    }
+
+    .cabecalho-acoes .botao-menu {
+      display: none;
+    }
+  }
+
+  /* ---------- Menu móvel ---------- */
+  .menu-movel {
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    max-height: 100%;
+    margin: 0;
+    padding: 1rem var(--margem) 2rem;
+    border: 0;
+    background: var(--nevoa);
+    color: var(--grafite);
+    overflow-y: auto;
+  }
+
+  .menu-movel::backdrop {
+    background: rgb(19 48 74 / 0.4);
+  }
+
+  @media (min-width: 600px) {
+    .menu-movel {
+      margin-left: auto;
+      width: min(440px, 100%);
+      box-shadow: var(--sombra);
+    }
+  }
+
+  .menu-movel-topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--linha);
+  }
+
+  .menu-movel-titulo {
+    font-weight: 700;
+    font-size: var(--fs-sobretitulo);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--mare);
+  }
+
+  .menu-movel-links {
+    list-style: none;
+    padding: 1rem 0;
+  }
+
+  .menu-movel-links a {
+    display: flex;
+    align-items: center;
+    min-height: 56px;
+    font-family: var(--f-titulo);
+    font-weight: 600;
+    font-size: 1.625rem;
+    color: var(--noturno);
+    text-decoration: none;
+    border-bottom: 1px solid var(--linha);
+  }
+
+  .menu-movel-links a[aria-current='page'] {
+    color: var(--petroleo);
+    text-decoration: underline;
+    text-decoration-color: var(--turquesa);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.25em;
+  }
+
+  .menu-movel-contato {
+    display: grid;
+    gap: 1rem;
+    justify-items: start;
+    padding-top: 1rem;
+  }
+
+  :global(html.menu-aberto) {
+    overflow: hidden;
+  }
+</style>

@@ -1,0 +1,83 @@
+---
+import Icone from './Icone.astro';
+import { whatsappLink } from '@/lib/whatsapp';
+
+interface Props {
+  mensagem?: string;
+}
+const { mensagem } = Astro.props;
+---
+
+<aside class="fab-regiao" aria-label="Atalho para agendamento">
+  <a
+    class="fab-whatsapp"
+    href={whatsappLink(mensagem)}
+    rel="noopener"
+    target="_blank"
+    aria-label="Agendar pelo WhatsApp"
+    data-evento="whatsapp"
+    data-origem="botao-flutuante"
+    data-fab
+  >
+    <Icone nome="whatsapp" tamanho={30} />
+  </a>
+</aside>
+
+<script>
+  // O botão se recolhe quando o rodapé aparece, para não cobri-lo (o rodapé já tem o WhatsApp).
+  const fab = document.querySelector<HTMLElement>('[data-fab]');
+  const rodape = document.querySelector('footer');
+  if (fab && rodape && 'IntersectionObserver' in window) {
+    new IntersectionObserver(([e]) => fab.classList.toggle('recolhido', e.isIntersecting), {
+      rootMargin: '0px 0px -40px 0px',
+    }).observe(rodape);
+  }
+</script>
+
+<style>
+  .fab-whatsapp {
+    position: fixed;
+    right: max(1rem, env(safe-area-inset-right));
+    bottom: max(1rem, env(safe-area-inset-bottom));
+    z-index: 15;
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--petroleo);
+    color: var(--branco);
+    box-shadow: 0 6px 18px rgb(19 48 74 / 0.28);
+    transition:
+      background-color var(--dur) var(--ease),
+      transform var(--dur) var(--ease),
+      opacity var(--dur) var(--ease);
+  }
+
+  .fab-whatsapp:hover {
+    background: var(--noturno);
+    color: var(--branco);
+    transform: translateY(-2px);
+  }
+
+  .fab-whatsapp:focus-visible {
+    outline-offset: 4px;
+  }
+
+  .fab-whatsapp:global(.recolhido) {
+    opacity: 0;
+    transform: translateY(16px);
+    pointer-events: none;
+    visibility: hidden;
+    transition:
+      opacity var(--dur) var(--ease),
+      transform var(--dur) var(--ease),
+      visibility 0s linear var(--dur);
+  }
+
+  @media print {
+    .fab-whatsapp {
+      display: none;
+    }
+  }
+</style>

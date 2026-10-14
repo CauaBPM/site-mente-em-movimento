@@ -1,0 +1,118 @@
+---
+/** Abertura das páginas internas: trilha de navegação, sobretítulo, H1 e introdução. */
+import Trajetoria from './Trajetoria.astro';
+import Arco from './Arco.astro';
+import { inline } from '@/lib/texto';
+
+interface Props {
+  h1: string;
+  intro?: string;
+  sobretitulo?: string;
+  trilha: { nome: string; caminho: string }[];
+}
+
+const { h1, intro, sobretitulo, trilha } = Astro.props;
+---
+
+<section class="abertura-pagina fundo-nevoa" aria-labelledby="titulo-pagina">
+  <Arco cor="bruma" tamanho="clamp(320px, 46vw, 680px)" posicao="right: -14%; top: -55%" />
+  <Trajetoria variante="canto" class="abertura-trajetoria" />
+  <div class="contem abertura-interno">
+    <nav aria-label="Trilha de navegação" class="trilha">
+      <ol>
+        {trilha.map((item, i) => (
+          <li>
+            {i < trilha.length - 1 ? (
+              <a href={item.caminho}>{item.nome}</a>
+            ) : (
+              <span aria-current="page">{item.nome}</span>
+            )}
+          </li>
+        ))}
+      </ol>
+    </nav>
+    {sobretitulo && <p class="sobretitulo">{sobretitulo}</p>}
+    <h1 id="titulo-pagina" set:html={inline(h1)} />
+    {intro && <p class="lead" set:html={inline(intro)} />}
+    <slot />
+  </div>
+</section>
+
+<style>
+  .abertura-pagina {
+    position: relative;
+    overflow: hidden;
+    padding-top: clamp(1.5rem, 1rem + 2vw, 3rem);
+    padding-bottom: clamp(3rem, 2rem + 4vw, 5.5rem);
+  }
+
+  .abertura-interno {
+    position: relative;
+    z-index: 1;
+  }
+
+  .abertura-interno h1 {
+    max-width: 18ch;
+  }
+
+  .abertura-interno .lead {
+    margin-top: 1.25rem;
+  }
+
+  .abertura-interno :global(.grupo-botoes) {
+    margin-top: 2rem;
+  }
+
+  :global(.abertura-trajetoria) {
+    position: absolute;
+    right: 0;
+    bottom: -10%;
+    width: clamp(260px, 26vw, 380px);
+    height: auto;
+    z-index: 0;
+    opacity: 0.9;
+  }
+
+  @media (max-width: 1079px) {
+    :global(.abertura-trajetoria) {
+      display: none;
+    }
+  }
+
+  .trilha {
+    margin-bottom: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+    font-size: var(--fs-pequeno);
+  }
+
+  .trilha ol {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    list-style: none;
+    padding: 0;
+    color: var(--ardosia);
+  }
+
+  .trilha li {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .trilha li + li::before {
+    content: '/';
+    margin-inline: 0.5rem;
+    color: var(--ardosia);
+  }
+
+  .trilha a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-weight: 600;
+  }
+
+  .trilha [aria-current] {
+    font-weight: 600;
+    color: var(--grafite);
+  }
+</style>

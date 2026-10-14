@@ -1,0 +1,178 @@
+---
+/** Endereço, horário, contatos e mapa sob demanda. */
+import Icone from './Icone.astro';
+import MapConsent from './MapConsent.astro';
+import { clinica } from '@/content/clinica';
+import { whatsappLink, telefoneHref } from '@/lib/whatsapp';
+
+interface Props {
+  origem: string;
+  /** Mostrar o link "Ver avaliações no Google" */
+  avaliacoes?: boolean;
+}
+const { origem, avaliacoes = true } = Astro.props;
+const perfilGoogle = clinica.google.perfilConfirmado ?? clinica.google.buscaMaps;
+---
+
+<div class="localizacao">
+  <div class="localizacao-info">
+    <dl class="localizacao-dados">
+      <div>
+        <dt>
+          <Icone nome="localizacao" />
+          Endereço
+        </dt>
+        <dd>
+          <address>
+            {clinica.endereco.logradouro}
+            <br />
+            {clinica.endereco.bairro}, {clinica.endereco.cidade} – {clinica.endereco.uf}
+            <br />
+            CEP {clinica.endereco.cep}
+          </address>
+          <a
+            class="link-seta"
+            href={clinica.google.rotas}
+            rel="noopener"
+            target="_blank"
+            data-evento="como-chegar"
+            data-origem={origem}
+          >
+            Como chegar <Icone nome="externo" />
+          </a>
+        </dd>
+      </div>
+      <div>
+        <dt>
+          <Icone nome="relogio" />
+          Horário
+        </dt>
+        <dd>
+          {clinica.horario.texto}
+          <br />
+          <span class="pequeno">{clinica.horario.observacao}</span>
+        </dd>
+      </div>
+      <div>
+        <dt>
+          <Icone nome="telefone" />
+          Telefone e WhatsApp
+        </dt>
+        <dd>
+          <a
+            href={telefoneHref}
+            class="localizacao-telefone"
+            data-evento="telefone"
+            data-origem={origem}
+          >
+            {clinica.telefone.exibicao}
+          </a>
+        </dd>
+      </div>
+    </dl>
+
+    <div class="grupo-botoes">
+      <a
+        class="botao botao-primario"
+        href={whatsappLink()}
+        rel="noopener"
+        target="_blank"
+        data-evento="whatsapp"
+        data-origem={origem}
+      >
+        <Icone nome="whatsapp" />
+        Agendar pelo WhatsApp
+      </a>
+    </div>
+
+    <ul class="localizacao-links">
+      <li>
+        <a class="link-seta" href={clinica.instagram.url} rel="noopener" target="_blank">
+          <Icone nome="instagram" />
+          Instagram {clinica.instagram.usuario}
+        </a>
+      </li>
+      {avaliacoes && (
+        <li>
+          <a class="link-seta" href={perfilGoogle} rel="noopener" target="_blank">
+            <Icone nome="externo" />
+            Ver avaliações no Google
+          </a>
+        </li>
+      )}
+    </ul>
+  </div>
+
+  <MapConsent />
+</div>
+
+<style>
+  .localizacao {
+    display: grid;
+    gap: clamp(2rem, 1.5rem + 2vw, 3.5rem);
+  }
+
+  @media (min-width: 900px) {
+    .localizacao {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+      align-items: stretch;
+    }
+  }
+
+  .localizacao-dados {
+    display: grid;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .localizacao-dados > div {
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--linha);
+  }
+
+  dt {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+    font-size: var(--fs-sobretitulo);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--mare);
+  }
+
+  dt :global(.icone) {
+    width: 1.375rem;
+    height: 1.375rem;
+    color: var(--petroleo);
+  }
+
+  dd {
+    margin: 0;
+  }
+
+  address {
+    font-style: normal;
+  }
+
+  .localizacao-telefone {
+    font-family: var(--f-titulo);
+    font-weight: 600;
+    font-size: var(--fs-h3);
+    text-decoration: none;
+  }
+
+  .localizacao-telefone:hover {
+    text-decoration: underline;
+  }
+
+  .localizacao-links {
+    list-style: none;
+    padding: 0;
+    margin-top: 1.25rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1.75rem;
+  }
+</style>

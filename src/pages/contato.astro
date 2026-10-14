@@ -1,0 +1,134 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import CabecalhoPagina from '@/components/CabecalhoPagina.astro';
+import Icone from '@/components/Icone.astro';
+import BlocoLocalizacao from '@/components/BlocoLocalizacao.astro';
+import ContactForm from '@/components/ContactForm.astro';
+import { contato } from '@/content/paginas/contato';
+import { clinica } from '@/content/clinica';
+import { config } from '@/lib/config';
+import { whatsappLink } from '@/lib/whatsapp';
+import { inline } from '@/lib/texto';
+import { breadcrumbs } from '@/lib/dados-estruturados';
+
+const trilha = [
+  { nome: 'Início', caminho: '/' },
+  { nome: 'Contato', caminho: '/contato' },
+];
+const site = Astro.site!;
+---
+
+<BaseLayout
+  titulo={contato.seo.titulo}
+  descricao={contato.seo.descricao}
+  caminho="/contato"
+  dados={[breadcrumbs(site, trilha)]}
+>
+  <CabecalhoPagina h1={contato.h1} intro={contato.intro} sobretitulo="Contato" trilha={trilha} />
+
+  <section class="secao-compacta fundo-branco" aria-labelledby="whatsapp-titulo">
+    <div class="contem">
+      <div class="destaque-whatsapp escuro">
+        <div>
+          <h2 id="whatsapp-titulo" class="h3">
+            {contato.whatsapp.titulo}
+          </h2>
+          <p>{contato.whatsapp.texto}</p>
+        </div>
+        <div class="destaque-acoes">
+          <a
+            class="botao botao-primario"
+            href={whatsappLink()}
+            rel="noopener"
+            target="_blank"
+            data-evento="whatsapp"
+            data-origem="contato-destaque"
+          >
+            <Icone nome="whatsapp" />
+            {contato.whatsapp.botao}
+          </a>
+          <p class="destaque-numero">{clinica.telefone.exibicao}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao fundo-linho" aria-labelledby="onde-titulo">
+    <div class="contem">
+      <div class="cabecalho-secao">
+        <p class="sobretitulo">Onde estamos</p>
+        <h2 id="onde-titulo">
+          Endereço, horário e <em>mapa</em>
+        </h2>
+      </div>
+      <BlocoLocalizacao origem="contato" />
+    </div>
+  </section>
+
+  {config.formularioAtivo && (
+    <section class="secao fundo-branco" aria-labelledby="form-titulo">
+      <div class="contem form-grade-pagina">
+        <div>
+          <p class="sobretitulo">Formulário</p>
+          <h2 id="form-titulo" set:html={inline(contato.formulario.titulo)} />
+          <p class="lead form-intro">{contato.formulario.texto}</p>
+        </div>
+        <ContactForm />
+      </div>
+    </section>
+  )}
+</BaseLayout>
+
+<style>
+  .destaque-whatsapp {
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    gap: 1.5rem;
+    padding: clamp(1.75rem, 1rem + 3vw, 3rem);
+    border-radius: var(--raio-l);
+    background: var(--petroleo);
+  }
+
+  .destaque-whatsapp p {
+    margin-top: 0.75rem;
+    max-width: 52ch;
+    color: var(--branco);
+  }
+
+  @media (min-width: 900px) {
+    .destaque-whatsapp {
+      grid-template-columns: 1.4fr 1fr;
+      align-items: center;
+      gap: 3rem;
+    }
+
+    .destaque-acoes {
+      justify-self: end;
+      text-align: right;
+    }
+  }
+
+  .destaque-numero {
+    font-family: var(--f-titulo);
+    font-weight: 600;
+    font-size: var(--fs-h3);
+  }
+
+  .form-grade-pagina {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    .form-grade-pagina {
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+      gap: 5rem;
+      align-items: start;
+    }
+  }
+
+  .form-intro {
+    margin-top: 1rem;
+  }
+</style>

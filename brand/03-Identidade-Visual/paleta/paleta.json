@@ -1,0 +1,20 @@
+{
+  "marca": "Mente em Movimento — Centro de Saúde Mental e Cognitiva",
+  "versao": "1.0 (outubro de 2026)",
+  "observacao": "Cores Noturno, Petróleo e Turquesa foram amostradas do arquivo da logo. A logo é sempre reproduzida a partir do arquivo original, sem recoloração.",
+  "cores": [
+    {"nome": "Noturno",  "grupo": "principal",  "hex": "#13304A", "rgb": [19, 48, 74],    "uso": "Títulos, fundos escuros institucionais, texto de alto contraste."},
+    {"nome": "Petróleo", "grupo": "principal",  "hex": "#1F6078", "rgb": [31, 96, 120],   "uso": "Cor-assinatura: fundos de destaque, botões, marcadores, links."},
+    {"nome": "Turquesa", "grupo": "secundária", "hex": "#249C90", "rgb": [36, 156, 144],  "uso": "Grafismos (trajetória, nós), detalhes. Texto só em tamanho grande sobre Noturno."},
+    {"nome": "Maré",     "grupo": "secundária", "hex": "#23767E", "rgb": [35, 118, 126],  "uso": "Turquesa acessível para texto: sobretítulos, registros, legendas em destaque."},
+    {"nome": "Bruma",    "grupo": "apoio",      "hex": "#D6ECE9", "rgb": [214, 236, 233], "uso": "Fundos suaves, arcos, ícones e texto sobre fundos escuros."},
+    {"nome": "Névoa",    "grupo": "fundo",      "hex": "#EEEFF1", "rgb": [238, 239, 241], "uso": "Fundo institucional — mesma cor do fundo do arquivo da logo; placa da logo."},
+    {"nome": "Linho",    "grupo": "fundo",      "hex": "#F5F1EA", "rgb": [245, 241, 234], "uso": "Fundo quente para conteúdos de acolhimento e equipe."},
+    {"nome": "Branco",   "grupo": "fundo",      "hex": "#FFFFFF", "rgb": [255, 255, 255], "uso": "Fundo de conteúdos científicos e documentos."},
+    {"nome": "Grafite",  "grupo": "texto",      "hex": "#2E3236", "rgb": [46, 50, 54],    "uso": "Texto corrido."},
+    {"nome": "Ardósia",  "grupo": "texto",      "hex": "#56636B", "rgb": [86, 99, 107],   "uso": "Texto secundário, rodapés, legendas."},
+    {"nome": "Linha",    "grupo": "texto",      "hex": "#D3DBDC", "rgb": [211, 219, 220], "uso": "Fios divisores e bordas."},
+    {"nome": "Damasco",  "grupo": "destaque",   "hex": "#E39A6B", "rgb": [227, 154, 107], "uso": "Destaque pontual (máx. 5%): um nó, um selo. Nunca para texto sobre fundo claro."}
+  ],
+  "exclusivas_da_logo": ["vermelho, azul e amarelo das peças de quebra-cabeça — não usar fora da logo"]
+}
