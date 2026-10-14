@@ -2,6 +2,7 @@
 import Logo from './Logo.astro';
 import Icone from './Icone.astro';
 import { clinica, confirmado } from '@/content/clinica';
+import { creditos } from '@/content/creditos';
 import { whatsappLink, telefoneHref } from '@/lib/whatsapp';
 import { especialidadesPublicadas, equipeConfirmada, rotaEspecialidade } from '@/lib/conteudo';
 
@@ -128,8 +129,18 @@ const ano = new Date().getFullYear();
         {clinica.responsaveisTecnicos.valor.map((r) => `${r.nome} (${r.registro})`).join(' · ')}
       </p>
     )}
-    <p>
+    <p class="rodape-links-legais">
       <a href="/politica-de-privacidade">Política de Privacidade</a>
+      <span class="rodape-credito">
+        {creditos.texto}{' '}
+        {creditos.url ? (
+          <a href={creditos.url} rel="noopener" target="_blank">
+            {creditos.nome}
+          </a>
+        ) : (
+          <strong>{creditos.nome}</strong>
+        )}
+      </span>
     </p>
   </div>
 </footer>
@@ -242,6 +253,18 @@ const ano = new Date().getFullYear();
     gap: 0.5rem 2rem;
     padding-top: 1.5rem;
     font-size: 0.875rem;
+  }
+
+  .rodape-links-legais {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 1.5rem;
+  }
+
+  .rodape-credito strong {
+    font-weight: 700;
+    color: var(--branco);
   }
 
   .rodape-legal a {
