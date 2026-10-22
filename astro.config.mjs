@@ -35,7 +35,8 @@ export default defineConfig({
     sitemap({
       filter: (page) => !page.includes('/404'),
     }),
-    cabecalhosSeguranca({ env }),
     subcaminho({ base: BASE_PATH, site: SITE_URL, previa: env.PUBLIC_PREVIEW === 'true' }),
+    // Por último: os hashes da CSP são calculados sobre o HTML já final
+    cabecalhosSeguranca({ env }),
   ],
 });

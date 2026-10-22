@@ -11,10 +11,18 @@ function escapar(texto: string): string {
     .replace(/"/g, '&quot;');
 }
 
+/**
+ * Destinos aceitos em [texto](link): caminho interno, âncora, https, tel e mailto.
+ * Qualquer outro esquema (javascript:, data:, http: etc.) vira texto simples.
+ */
+const linkPermitido = (href: string) =>
+  /^(\/(?!\/)|#|https:\/\/|tel:|mailto:)/i.test(href.replace(/&amp;/g, '&'));
+
 export function inline(texto: string): string {
   return escapar(texto)
     .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_, rotulo: string, href: string) => {
-      const externo = /^https?:\/\//.test(href);
+      if (!linkPermitido(href)) return rotulo;
+      const externo = /^https:\/\//.test(href);
       const attrs = externo ? ' rel="noopener" target="_blank"' : '';
       return `<a href="${href}"${attrs}>${rotulo}</a>`;
     })

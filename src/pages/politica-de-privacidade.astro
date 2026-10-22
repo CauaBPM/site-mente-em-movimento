@@ -13,7 +13,9 @@ const trilha = [
 ];
 const site = Astro.site!;
 const secoes = privacidade.secoes.filter(
-  (s) => !('formulario' in s && s.formulario) || config.formularioAtivo,
+  (s) =>
+    (!('formulario' in s && s.formulario) || config.formularioAtivo) &&
+    (!('analytics' in s && s.analytics) || Boolean(config.analytics)),
 );
 const dataExtenso = new Date(`${privacidade.atualizadaEm}T12:00:00`).toLocaleDateString('pt-BR', {
   day: 'numeric',

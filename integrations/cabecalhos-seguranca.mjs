@@ -1,7 +1,18 @@
-// Gera dist/_headers (Cloudflare Pages / Netlify) ao final do build.
-// A CSP é montada a partir das funcionalidades ativadas por variável de
-// ambiente e inclui o hash SHA-256 de cada <script> inline encontrado no HTML,
-// para não precisar de 'unsafe-inline' em script-src.
+// Políticas de segurança aplicadas ao final do build.
+//
+// 1. Em TODAS as páginas: <meta http-equiv="Content-Security-Policy"> e
+//    <meta name="referrer">. É o que protege o site no GitHub Pages, que não
+//    permite configurar cabeçalhos HTTP. A CSP inclui o hash SHA-256 de cada
+//    <script> inline, para não precisar de 'unsafe-inline' em script-src.
+//    Limites da meta tag (ignorados pelo navegador): frame-ancestors,
+//    report-uri/report-to e sandbox — por isso não entram nela.
+// 2. dist/_headers (Cloudflare Pages / Netlify): os mesmos valores como
+//    cabeçalhos HTTP reais, mais os que só funcionam como cabeçalho
+//    (frame-ancestors, X-Frame-Options, nosniff, Permissions-Policy, HSTS).
+//    Não é gerado quando HOSPEDAGEM=github-pages, porque lá ele não tem efeito.
+//
+// Rode esta integração DEPOIS de qualquer outra que altere o HTML (os hashes
+// precisam corresponder ao conteúdo final dos scripts).
 import { createHash } from 'node:crypto';
 import { readdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -21,10 +32,26 @@ async function listarHtml(dir) {
 
 function origem(url) {
   try {
-    return new URL(url).origin;
+    const u = new URL(url);
+    return u.protocol === 'https:' ? u.origin : null;
   } catch {
     return null;
   }
+}
+
+const hashScript = (conteudo) =>
+  `'sha256-${createHash('sha256').update(conteudo).digest('base64')}'`;
+
+/** Hashes dos <script> inline executáveis de um HTML (ignora src= e JSON-LD). */
+function hashesInline(html) {
+  const hashes = [];
+  for (const [, atributos, conteudo] of html.matchAll(/<script(\s[^>]*)?>([\s\S]*?)<\/script>/g)) {
+    const attrs = atributos ?? '';
+    if (/\ssrc=/.test(attrs) || /type="application\/ld\+json"/.test(attrs)) continue;
+    if (!conteudo.trim()) continue;
+    hashes.push(hashScript(conteudo));
+  }
+  return hashes;
 }
 
 /** @param {{ env: Record<string, string> }} opcoes */
@@ -34,21 +61,18 @@ export default function cabecalhosSeguranca({ env }) {
     hooks: {
       'astro:build:done': async ({ dir, logger }) => {
         const pasta = fileURLToPath(dir);
+        const arquivos = await listarHtml(pasta);
+        const paginas = new Map();
         const hashes = new Set();
-        for (const arquivo of await listarHtml(pasta)) {
+        for (const arquivo of arquivos) {
           const html = await readFile(arquivo, 'utf8');
-          for (const [, atributos, conteudo] of html.matchAll(
-            /<script(\s[^>]*)?>([\s\S]*?)<\/script>/g,
-          )) {
-            const attrs = atributos ?? '';
-            if (/\ssrc=/.test(attrs) || /application\/ld\+json/.test(attrs)) continue;
-            if (!conteudo.trim()) continue;
-            hashes.add(`'sha256-${createHash('sha256').update(conteudo).digest('base64')}'`);
-          }
+          paginas.set(arquivo, html);
+          hashesInline(html).forEach((h) => hashes.add(h));
         }
 
         const script = ["'self'", ...hashes];
         const connect = ["'self'"];
+        // Mapa do Google: só carregado após o clique do visitante (MapConsent)
         const frame = ['https://www.google.com', 'https://maps.google.com'];
 
         if (env.PUBLIC_FORM_ENABLED === 'true') {
@@ -74,26 +98,57 @@ export default function cabecalhosSeguranca({ env }) {
             break;
         }
 
-        const csp = [
+        // Estilos: o Astro gera <style> inline e atributos style="" (posição de
+        // grafismos, proporção de imagens). Atributos style não aceitam hash sem
+        // 'unsafe-hashes', então style-src mantém 'unsafe-inline' — risco baixo,
+        // porque scripts continuam restritos.
+        const diretivas = [
           "default-src 'self'",
           `script-src ${script.join(' ')}`,
+          "script-src-attr 'none'",
           "style-src 'self' 'unsafe-inline'",
           "img-src 'self' data:",
           "font-src 'self'",
           `connect-src ${connect.join(' ')}`,
           `frame-src ${frame.join(' ')}`,
+          "media-src 'none'",
+          "worker-src 'none'",
+          "manifest-src 'self'",
           "object-src 'none'",
           "base-uri 'self'",
           "form-action 'self'",
-          "frame-ancestors 'none'",
           'upgrade-insecure-requests',
-        ].join('; ');
+        ];
+        const cspMeta = diretivas.join('; ');
+        const cspHeader = [...diretivas, "frame-ancestors 'none'"].join('; ');
+        const referrer = 'strict-origin-when-cross-origin';
+
+        // 1. Meta tags em todas as páginas, logo após <head> (antes de qualquer script)
+        const metas =
+          `<meta http-equiv="Content-Security-Policy" content="${cspMeta}">` +
+          `<meta name="referrer" content="${referrer}">`;
+        for (const [arquivo, html] of paginas) {
+          if (!html.includes('<head>')) {
+            logger.warn(`Sem <head>: CSP não aplicada em ${arquivo}`);
+            continue;
+          }
+          await writeFile(arquivo, html.replace('<head>', `<head>${metas}`));
+        }
+
+        // 2. _headers para hospedagens que o suportam
+        if (env.HOSPEDAGEM === 'github-pages') {
+          logger.info(
+            `CSP por meta tag em ${paginas.size} página(s) (${hashes.size} script(s) inline com hash). ` +
+              '_headers não gerado (GitHub Pages não o utiliza).',
+          );
+          return;
+        }
 
         const conteudo = `/*
-  Content-Security-Policy: ${csp}
+  Content-Security-Policy: ${cspHeader}
   Strict-Transport-Security: max-age=31536000; includeSubDomains
   X-Content-Type-Options: nosniff
-  Referrer-Policy: strict-origin-when-cross-origin
+  Referrer-Policy: ${referrer}
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()
   X-Frame-Options: DENY
   Cross-Origin-Opener-Policy: same-origin
@@ -105,7 +160,9 @@ export default function cabecalhosSeguranca({ env }) {
   Cache-Control: public, max-age=31536000, immutable
 `;
         await writeFile(join(pasta, '_headers'), conteudo);
-        logger.info(`_headers gerado (${hashes.size} script(s) inline com hash na CSP).`);
+        logger.info(
+          `CSP por meta tag em ${paginas.size} página(s) e _headers gerado (${hashes.size} script(s) inline com hash).`,
+        );
       },
     },
   };

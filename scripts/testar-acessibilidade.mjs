@@ -87,6 +87,8 @@ for (const rota of await paginas()) {
     const contexto = await navegador.newContext({
       viewport: { width: largura, height: 900 },
       reducedMotion: 'reduce',
+      // A CSP do site (corretamente) bloqueia o axe-core injetado pelo teste
+      bypassCSP: true,
     });
     const pagina = await contexto.newPage();
     const erros = [];

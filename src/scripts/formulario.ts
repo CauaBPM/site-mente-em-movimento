@@ -114,8 +114,13 @@ document.querySelectorAll<HTMLFormElement>('[data-formulario]').forEach((form) =
       if (resposta.ok) {
         form.reset();
         if (inicio) inicio.value = String(Date.now());
-        retorno.innerHTML =
-          'Recebemos seu contato. <strong>A equipe vai retornar pelo telefone informado</strong>, de segunda a sexta, das 7h às 20h.';
+        const destaque = document.createElement('strong');
+        destaque.textContent = 'A equipe vai retornar pelo telefone informado';
+        retorno.replaceChildren(
+          'Recebemos seu contato. ',
+          destaque,
+          ', de segunda a sexta, das 7h às 20h.',
+        );
         retorno.focus();
         registrarEvento('Envio do formulário', { pagina: location.pathname });
       } else if (resposta.status === 422 && corpo.erros) {
@@ -124,7 +129,17 @@ document.querySelectorAll<HTMLFormElement>('[data-formulario]').forEach((form) =
         throw new Error(String(resposta.status));
       }
     } catch {
-      retorno.innerHTML = `Não foi possível enviar agora. Por favor, fale com a equipe pelo <a href="${whatsapp}" rel="noopener" target="_blank">WhatsApp (27) 99792-9358</a>.`;
+      const link = document.createElement('a');
+      // Só aceita o destino esperado (WhatsApp); qualquer outro valor é descartado
+      link.href = whatsapp.startsWith('https://wa.me/') ? whatsapp : 'https://wa.me/5527997929358';
+      link.rel = 'noopener';
+      link.target = '_blank';
+      link.textContent = 'WhatsApp (27) 99792-9358';
+      retorno.replaceChildren(
+        'Não foi possível enviar agora. Por favor, fale com a equipe pelo ',
+        link,
+        '.',
+      );
       retorno.focus();
     } finally {
       carregando(false);

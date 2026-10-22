@@ -8,6 +8,7 @@ Site institucional estático feito com **Astro 7 + TypeScript**, CSS próprio a 
   `/atendimento`, `/contato`, `/politica-de-privacidade`, `404` e `/equipe` (só existe quando há profissional confirmado).
 - Tudo o que ainda depende da clínica está em **[PENDENCIAS.md](PENDENCIAS.md)**.
 - Ações de SEO local fora do código: **[CHECKLIST-SEO-LOCAL.md](CHECKLIST-SEO-LOCAL.md)**.
+- Segurança (CSP, cabeçalhos, limites do GitHub Pages, segredos): **[SEGURANCA.md](SEGURANCA.md)**.
 
 ---
 

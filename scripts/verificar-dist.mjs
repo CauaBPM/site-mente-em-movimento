@@ -10,6 +10,8 @@ import { gzipSync } from 'node:zlib';
 
 const DIST = fileURLToPath(new URL('../dist/', import.meta.url));
 const erros = [];
+/** Erros de segurança: valem também no build com subcaminho (VERIFICAR_SO_SEGURANCA=true). */
+const seguranca = [];
 const avisos = [];
 
 async function listar(dir) {
@@ -63,7 +65,8 @@ const proibidos = [
   [/resultados comprovados/i, '"resultados comprovados"'],
   [/\bo melhor\b|\ba melhor clínica\b/i, '"o melhor"'],
   [/transformando vidas|jornada de bem-estar/i, 'clichê de IA'],
-  [/clinicamenteemmovimento@gmail\.com/i, 'e-mail não confirmado exibido'],
+  // Nenhum e-mail é exibido enquanto clinica.email estiver pendente
+  [/[\w.+-]+@[\w-]+\.[\w.]{2,}/, 'e-mail exibido (confirme clinica.email antes)'],
   [/\bundefined\b|\bnull\b|NaN/, 'valor vazio renderizado'],
   [/fonoaudiolog|terapia ocupacional|\bABA\b|indique e ganhe/i, 'serviço/campanha não confirmados'],
 ];
@@ -92,6 +95,22 @@ for (const [rota, html] of paginas) {
     descricoes.set(d, rota);
   }
   if (!/Vila Velha/.test(t + d)) avisos.push(`${onde} título/descrição sem "Vila Velha"`);
+
+  // Segurança: CSP por meta tag (única forma de aplicá-la no GitHub Pages), antes de qualquer script
+  const posCsp = html.indexOf('http-equiv="Content-Security-Policy"');
+  const posScript = html.indexOf('<script');
+  if (posCsp < 0) seguranca.push(`${onde} sem CSP (meta http-equiv)`);
+  else if (posScript >= 0 && posScript < posCsp)
+    seguranca.push(`${onde} CSP depois de um <script>`);
+  if (/unsafe-eval|script-src[^;"]*'unsafe-inline'/.test(html))
+    seguranca.push(`${onde} CSP permite 'unsafe-eval' ou script inline sem hash`);
+  if (!html.includes('<meta name="referrer" content="strict-origin-when-cross-origin">'))
+    seguranca.push(`${onde} sem meta referrer`);
+  for (const [, href] of html.matchAll(/\shref="([^"]+)"/g))
+    if (/^\s*(javascript|data|vbscript|http):/i.test(href))
+      seguranca.push(`${onde} link com esquema inseguro: ${href.slice(0, 40)}`);
+  for (const [tag] of html.matchAll(/<a [^>]*target="_blank"[^>]*>/g))
+    if (!/rel="[^"]*noopener/.test(tag)) seguranca.push(`${onde} target=_blank sem noopener`);
 
   for (const meta of [
     'rel="canonical"',
@@ -155,7 +174,7 @@ for (const [rota, html] of paginas) {
   // WhatsApp: número correto
   for (const [, href] of html.matchAll(/href="(https:\/\/wa\.me\/[^"]+)"/g)) {
     if (!href.startsWith('https://wa.me/5527997929358'))
-      erros.push(`${onde} link de WhatsApp com número errado: ${href}`);
+      seguranca.push(`${onde} link de WhatsApp com número errado: ${href}`);
   }
 }
 
@@ -174,13 +193,24 @@ if (urlsSitemap.includes('/equipe') && !paginas.has('/equipe'))
   erros.push('sitemap com /equipe sem profissionais');
 const robots = await readFile(join(DIST, 'robots.txt'), 'utf8').catch(() => '');
 if (!/Sitemap: https:\/\//.test(robots)) erros.push('robots.txt sem Sitemap absoluto');
-if (!(await existe(join(DIST, '_headers')))) erros.push('dist/_headers não foi gerado');
+if (process.env.HOSPEDAGEM !== 'github-pages' && !(await existe(join(DIST, '_headers'))))
+  seguranca.push('dist/_headers não foi gerado');
+if (arquivos.some((f) => f.endsWith('.map'))) seguranca.push('source maps publicados em dist/');
+for (const f of arquivos) {
+  const r = relative(DIST, f).replace(/\\/g, '/');
+  if (/(^|\/)\.env|\.(pem|key|p12|pfx)$|(^|\/)\.git\//i.test(r))
+    seguranca.push(`arquivo sensível publicado: ${r}`);
+}
 
 // JavaScript da página inicial
 const inicio = paginas.get('/') ?? '';
 let jsGzip = 0;
+const BASE = (process.env.BASE_PATH ?? '').replace(/\/$/, '');
 for (const [, src] of inicio.matchAll(/<script[^>]*src="(\/[^"]+\.js)"/g)) {
-  jsGzip += gzipSync(await readFile(join(DIST, src))).length;
+  const local = BASE && src.startsWith(`${BASE}/`) ? src.slice(BASE.length) : src;
+  const js = await readFile(join(DIST, local)).catch(() => null);
+  if (js) jsGzip += gzipSync(js).length;
+  else erros.push(`script da página inicial não encontrado: ${src}`);
 }
 for (const [, , js] of inicio.matchAll(
   /<script(?![^>]*(src=|ld\+json))[^>]*>([\s\S]*?)<\/script>/g,
@@ -196,9 +226,13 @@ console.log(
   `URLs no sitemap: ${urlsSitemap.length} · JS na página inicial: ${(jsGzip / 1024).toFixed(1)} KB gzip`,
 );
 avisos.forEach((a) => console.log(`aviso: ${a}`));
-if (erros.length) {
-  erros.forEach((e) => console.log(`ERRO: ${e}`));
-  console.log(`\n${erros.length} erro(s).`);
+// No build com subcaminho (GitHub Pages), links, sitemap e robots seguem outra estrutura
+// e já foram conferidos no build padrão: ali valem só as regras de segurança.
+const soSeguranca = process.env.VERIFICAR_SO_SEGURANCA === 'true';
+const falhas = soSeguranca ? seguranca : [...erros, ...seguranca];
+if (falhas.length) {
+  falhas.forEach((e) => console.log(`ERRO: ${e}`));
+  console.log(`\n${falhas.length} erro(s).`);
   process.exit(1);
 }
-console.log('\nTudo certo.');
+console.log(`\nTudo certo${soSeguranca ? ' (verificações de segurança)' : ''}.`);

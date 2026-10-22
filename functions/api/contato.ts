@@ -26,6 +26,8 @@ interface Contexto {
 }
 
 const LIMITE_POR_JANELA = 5;
+/** Tamanho máximo do corpo da requisição (bytes), verificado no conteúdo lido. */
+const TAMANHO_MAXIMO = 10_000;
 const JANELA_MS = 10 * 60 * 1000;
 // Limite em memória (por instância). Complementa a regra de Rate Limiting do Cloudflare.
 const tentativas = new Map<string, { contagem: number; desde: number }>();
@@ -57,17 +59,22 @@ async function limiteExcedido(ip: string, env: Env): Promise<boolean> {
 }
 
 async function turnstileValido(token: string, ip: string, segredo: string): Promise<boolean> {
-  if (!token) return false;
+  if (!token || token.length > 2048) return false;
   const corpo = new FormData();
   corpo.append('secret', segredo);
   corpo.append('response', token);
   corpo.append('remoteip', ip);
-  const r = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-    method: 'POST',
-    body: corpo,
-  });
-  const dados = (await r.json()) as { success?: boolean };
-  return dados.success === true;
+  try {
+    const r = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      body: corpo,
+    });
+    const dados = (await r.json()) as { success?: boolean };
+    return dados.success === true;
+  } catch {
+    // Falha na verificação = envio recusado (nunca aceito por padrão)
+    return false;
+  }
 }
 
 const escapar = (t: string) =>
@@ -91,13 +98,39 @@ function corpoEmail(d: DadosContato): { texto: string; html: string } {
   };
 }
 
+class CorpoGrandeDemais extends Error {}
+
+/**
+ * Lê o corpo respeitando TAMANHO_MAXIMO pelo conteúdo efetivamente recebido
+ * (o cabeçalho Content-Length pode estar ausente ou ser falso).
+ */
 async function ler(request: Request): Promise<Record<string, unknown>> {
+  const bruto = await request.text();
+  if (new TextEncoder().encode(bruto).length > TAMANHO_MAXIMO) throw new CorpoGrandeDemais();
   const tipo = request.headers.get('Content-Type') ?? '';
-  if (tipo.includes('application/json')) return (await request.json()) as Record<string, unknown>;
-  const form = await request.formData();
-  const obj: Record<string, unknown> = Object.fromEntries(form.entries());
-  obj.token = form.get('cf-turnstile-response') ?? '';
-  return obj;
+  if (tipo.includes('application/json')) {
+    const dados: unknown = JSON.parse(bruto);
+    if (!dados || typeof dados !== 'object' || Array.isArray(dados)) throw new Error('formato');
+    return dados as Record<string, unknown>;
+  }
+  if (tipo.includes('application/x-www-form-urlencoded')) {
+    const form = new URLSearchParams(bruto);
+    const obj: Record<string, unknown> = Object.fromEntries(form.entries());
+    obj.token = form.get('cf-turnstile-response') ?? '';
+    return obj;
+  }
+  throw new Error('tipo');
+}
+
+/** Aceita apenas envios do próprio site. Origin ausente é tolerado (navegadores antigos). */
+function origemPermitida(request: Request): boolean {
+  const origem = request.headers.get('Origin');
+  if (!origem) return true;
+  try {
+    return new URL(origem).host === new URL(request.url).host;
+  } catch {
+    return false; // inclui "null" (iframes sandbox, arquivos locais)
+  }
 }
 
 export async function onRequestPost({ request, env }: Contexto): Promise<Response> {
@@ -105,14 +138,10 @@ export async function onRequestPost({ request, env }: Contexto): Promise<Respons
     return json({ erro: 'Formulário indisponível.' }, 503);
   }
 
-  // Aceita apenas envios vindos do próprio site
-  const origem = request.headers.get('Origin');
-  if (origem && new URL(origem).host !== new URL(request.url).host) {
-    return json({ erro: 'Origem não permitida.' }, 403);
-  }
+  if (!origemPermitida(request)) return json({ erro: 'Origem não permitida.' }, 403);
 
   const tamanho = Number(request.headers.get('Content-Length') ?? '0');
-  if (tamanho > 10_000) return json({ erro: 'Requisição muito grande.' }, 413);
+  if (tamanho > TAMANHO_MAXIMO) return json({ erro: 'Requisição muito grande.' }, 413);
 
   const ip = request.headers.get('CF-Connecting-IP') ?? 'desconhecido';
   if (await limiteExcedido(ip, env)) {
@@ -125,7 +154,8 @@ export async function onRequestPost({ request, env }: Contexto): Promise<Respons
   let entrada: Record<string, unknown>;
   try {
     entrada = await ler(request);
-  } catch {
+  } catch (e) {
+    if (e instanceof CorpoGrandeDemais) return json({ erro: 'Requisição muito grande.' }, 413);
     return json({ erro: 'Dados inválidos.' }, 400);
   }
 
@@ -143,21 +173,27 @@ export async function onRequestPost({ request, env }: Contexto): Promise<Respons
   if (Object.keys(erros).length > 0) return json({ erros }, 422);
 
   const { texto, html } = corpoEmail(dados);
-  const envio = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${env.RESEND_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      from: env.CONTACT_FROM,
-      to: [env.CONTACT_EMAIL],
-      ...(dados.email ? { reply_to: dados.email } : {}),
-      subject: `Contato pelo site: ${dados.area}`,
-      text: texto,
-      html,
-    }),
-  });
+  let envio: Response;
+  try {
+    envio = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${env.RESEND_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: env.CONTACT_FROM,
+        to: [env.CONTACT_EMAIL],
+        ...(dados.email ? { reply_to: dados.email } : {}),
+        subject: `Contato pelo site: ${dados.area}`,
+        text: texto,
+        html,
+      }),
+    });
+  } catch {
+    console.error('Falha de rede no envio de e-mail.');
+    return json({ erro: 'Falha no envio.' }, 502);
+  }
 
   if (!envio.ok) {
     // Registra apenas o código de status — nunca o conteúdo do formulário.

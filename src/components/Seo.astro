@@ -62,5 +62,6 @@ const imagemAbs = new URL(imagem, site).href;
 )}
 
 {dados.map((d) => (
-  <script type="application/ld+json" set:html={JSON.stringify(d)} />
+  // "<" escapado: nenhum valor consegue fechar o <script> antes da hora
+  <script type="application/ld+json" set:html={JSON.stringify(d).replace(/</g, '\\u003c')} />
 ))}

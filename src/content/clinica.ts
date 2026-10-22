@@ -77,8 +77,11 @@ export const clinica = {
     embed: 'https://www.google.com/maps?q=-20.373898,-40.3131584&z=16&hl=pt-BR&output=embed',
   },
 
-  /** E-mail do cadastro da Receita. NÃO exibir até a clínica confirmar. */
-  email: { status: 'pendente', valor: 'clinicamenteemmovimento@gmail.com' } as ItemPendente<string>,
+  /**
+   * E-mail público de contato. Fica vazio até a clínica confirmar qual endereço divulgar
+   * (o repositório é público: não guarde aqui endereços não confirmados).
+   */
+  email: { status: 'pendente', valor: null } as ItemPendente<string>,
 
   /** Número do CNES. Exibido no rodapé só quando confirmado. */
   cnes: { status: 'pendente', valor: null } as ItemPendente<string>,

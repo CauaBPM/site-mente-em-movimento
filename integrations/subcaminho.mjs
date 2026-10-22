@@ -48,7 +48,10 @@ export default function subcaminho({ base, site, previa }) {
             // url(/...) em CSS inline
             texto = texto.replace(new RegExp(`(url\\(['"]?)/(?!/)${naoBase}`, 'g'), `$1${base}/`);
             // URLs absolutas do próprio site (canonical, Open Graph, JSON-LD, sitemap, robots)
-            texto = texto.replace(new RegExp(`${escapar(origem)}/${naoBase}`, 'g'), `${origem}${base}/`);
+            texto = texto.replace(
+              new RegExp(`${escapar(origem)}/${naoBase}`, 'g'),
+              `${origem}${base}/`,
+            );
             // Manifesto
             if (arquivo.endsWith('.webmanifest')) {
               texto = texto.replace(new RegExp(`"/${naoBase}`, 'g'), `"${base}/`);
@@ -81,7 +84,9 @@ export default function subcaminho({ base, site, previa }) {
           await writeFile(join(pasta, '.nojekyll'), '');
         }
 
-        logger.info(`Ajustes aplicados${base ? ` (subcaminho ${base})` : ''}${previa ? ' (prévia: noindex)' : ''}.`);
+        logger.info(
+          `Ajustes aplicados${base ? ` (subcaminho ${base})` : ''}${previa ? ' (prévia: noindex)' : ''}.`,
+        );
       },
     },
   };

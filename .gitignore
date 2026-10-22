@@ -7,3 +7,10 @@ dist/
 !.env.example
 .DS_Store
 relatorios/
+# Segredos e credenciais locais (nunca versionar)
+.dev.vars
+*.pem
+*.key
+*.p12
+*.pfx
+npm-debug.log*

@@ -5,7 +5,8 @@
  * publicação definitiva (ver PENDENCIAS.md). Ao alterar, atualize `atualizadaEm`.
  *
  * Seções com `formulario: true` só aparecem quando o formulário de contato
- * estiver ativado (PUBLIC_FORM_ENABLED=true).
+ * estiver ativado (PUBLIC_FORM_ENABLED=true); com `analytics: true`, só quando
+ * houver ferramenta de estatística configurada (PUBLIC_ANALYTICS).
  */
 export const privacidade = {
   seo: {
@@ -27,7 +28,7 @@ export const privacidade = {
     {
       titulo: 'Quais dados coletamos',
       paragrafos: [
-        'Este site não exige cadastro e não usa cookies de publicidade ou de rastreamento.',
+        'Este site não exige cadastro, não usa cookies e não guarda dados no seu navegador. As fontes e as imagens são servidas pelo próprio site, sem serviços de terceiros.',
       ],
     },
     {
@@ -41,9 +42,16 @@ export const privacidade = {
     {
       titulo: 'Dados de navegação',
       paragrafos: [
-        'Para medir o uso do site, podemos utilizar uma ferramenta de estatística que não usa cookies e não identifica o visitante, registrando apenas dados agregados, como páginas visitadas e cliques em botões de contato.',
+        'Como em qualquer site, o provedor de hospedagem pode registrar dados técnicos de acesso, como endereço IP, data e hora e navegador utilizado, para o funcionamento e a segurança do serviço. A clínica não usa esses registros para identificar visitantes.',
         'O mapa do Google só é carregado se você clicar em "Carregar mapa". A partir desse momento, o Google pode coletar dados conforme a política de privacidade dele.',
         'Ao clicar no botão do WhatsApp, você é direcionado ao aplicativo WhatsApp, e a conversa passa a seguir também os termos e a política de privacidade desse serviço.',
+      ],
+    },
+    {
+      analytics: true,
+      titulo: 'Estatísticas de uso',
+      paragrafos: [
+        'Para medir o uso do site, utilizamos uma ferramenta de estatística que não usa cookies e não identifica o visitante, registrando apenas dados agregados, como páginas visitadas e cliques em botões de contato.',
       ],
     },
     {
