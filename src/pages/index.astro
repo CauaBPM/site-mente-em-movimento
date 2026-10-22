@@ -8,7 +8,11 @@ import RedeCognitiva from '@/components/RedeCognitiva.astro';
 import FAQ from '@/components/FAQ.astro';
 import Galeria from '@/components/Galeria.astro';
 import BlocoLocalizacao from '@/components/BlocoLocalizacao.astro';
+import Ilustracao from '@/components/Ilustracao.astro';
+import Modalidades from '@/components/Modalidades.astro';
 import { inicio } from '@/content/paginas/inicio';
+import { modalidades } from '@/content/modalidades';
+import { servicos, rotaServico } from '@/content/servicos';
 import { clinica } from '@/content/clinica';
 import { faqInicio } from '@/content/faq';
 import { especialidadesPublicadas, rotaEspecialidade } from '@/lib/conteudo';
@@ -29,6 +33,11 @@ const grupos = (['medica', 'mente-cognicao-aprendizagem'] as const)
   .filter((g) => g.itens.length > 0);
 
 const publicadas = new Set(especialidades.map((e) => e.id));
+/** Destino de "Por onde começar": especialidade publicada ou link interno (serviços, idosos). */
+const destinos = (lista: { slug?: string; href?: string; rotulo: string }[]) =>
+  lista
+    .filter((d) => (d.slug ? publicadas.has(d.slug) : Boolean(d.href)))
+    .map((d) => ({ rotulo: d.rotulo, href: d.slug ? rotaEspecialidade(d.slug) : d.href! }));
 
 const dados = [
   medicalClinic(
@@ -136,16 +145,14 @@ const dados = [
               <h3>{s.titulo}</h3>
               <p>{s.texto}</p>
               <ul class="situacao-destinos" aria-label="Especialidades indicadas">
-                {s.destinos
-                  .filter((d) => publicadas.has(d.slug))
-                  .map((d) => (
-                    <li>
-                      <a class="link-seta" href={rotaEspecialidade(d.slug)}>
-                        {d.rotulo}
-                        <Icone nome="seta" />
-                      </a>
-                    </li>
-                  ))}
+                {destinos(s.destinos).map((d) => (
+                  <li>
+                    <a class="link-seta" href={d.href}>
+                      {d.rotulo}
+                      <Icone nome="seta" />
+                    </a>
+                  </li>
+                ))}
               </ul>
             </div>
           </li>
@@ -210,6 +217,25 @@ const dados = [
             </div>
           ))}
         </div>
+        <div class="esp-grupo esp-grupo-largo" data-revelar>
+          <p class="esp-grupo-titulo">{inicio.especialidades.grupoServicos}</p>
+          <ul>
+            {servicos.map((s) => (
+              <li class="esp-item">
+                <MarcadorArea rotulo={s.nome} />
+                <p>{s.resumo}</p>
+                <a
+                  class="link-seta esp-item-link"
+                  href={rotaServico(s.id)}
+                  aria-label={`Saiba mais sobre ${s.nome}`}
+                >
+                  Saiba mais
+                  <Icone nome="seta" />
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
 
       <p class="esp-todas" data-revelar>
@@ -220,7 +246,57 @@ const dados = [
     </div>
   </section>
 
-  <!-- 5. Cuidado integrado -->
+  <!-- 5. Pessoas idosas -->
+  <section class="secao fundo-branco" aria-labelledby="idosos-titulo">
+    <div class="contem idosos-grade">
+      <Ilustracao
+        ilustracao={inicio.idosos.ilustracao}
+        sizes="(min-width: 1024px) 45vw, 100vw"
+        proporcao="5 / 4"
+        class="idosos-foto"
+      />
+      <div class="idosos-texto" data-revelar>
+        <p class="sobretitulo">{inicio.idosos.sobretitulo}</p>
+        <h2 id="idosos-titulo" set:html={inline(inicio.idosos.titulo)} />
+        <p class="lead">{inicio.idosos.texto}</p>
+        <ul class="lista-marcada">
+          {inicio.idosos.itens.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+        <div class="grupo-botoes">
+          <a class="botao botao-primario" href="/atendimento#idosos">
+            {inicio.idosos.botao}
+          </a>
+          <a
+            class="link-seta"
+            href={whatsappLink(inicio.idosos.mensagemWhatsApp)}
+            rel="noopener"
+            target="_blank"
+            data-evento="whatsapp"
+            data-origem="inicio-idosos"
+          >
+            <Icone nome="whatsapp" />
+            {inicio.idosos.linkWhatsApp}
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Modalidades -->
+  <section class="secao fundo-nevoa" aria-labelledby="modalidades-titulo">
+    <div class="contem">
+      <div class="cabecalho-secao" data-revelar>
+        <p class="sobretitulo">{modalidades.sobretitulo}</p>
+        <h2 id="modalidades-titulo" set:html={inline(modalidades.titulo)} />
+        <p class="lead">{modalidades.intro}</p>
+      </div>
+      <Modalidades origem="inicio" />
+    </div>
+  </section>
+
+  <!-- 7. Cuidado integrado -->
   <section class="secao escuro integrado" aria-labelledby="integrado-titulo">
     <span class="constelacao" aria-hidden="true"></span>
     <div class="contem integrado-interno">
@@ -278,7 +354,7 @@ const dados = [
     </div>
   </section>
 
-  <!-- 6. O espaço -->
+  <!-- 8. O espaço -->
   <section class="secao fundo-branco espaco" aria-labelledby="espaco-titulo">
     <div class="contem espaco-grade">
       <div class="espaco-visual" aria-hidden="true">
@@ -305,7 +381,7 @@ const dados = [
     </div>
   </section>
 
-  <!-- 7. Como funciona -->
+  <!-- 9. Como funciona -->
   <section class="secao fundo-nevoa" aria-labelledby="como-titulo">
     <div class="contem">
       <div class="cabecalho-secao" data-revelar>
@@ -353,7 +429,7 @@ const dados = [
     </div>
   </section>
 
-  <!-- 8. Perguntas frequentes -->
+  <!-- 10. Perguntas frequentes -->
   <section class="secao fundo-branco" aria-labelledby="faq-titulo">
     <div class="contem faq-grade">
       <div data-revelar>
@@ -368,7 +444,7 @@ const dados = [
     </div>
   </section>
 
-  <!-- 9. Localização e contato -->
+  <!-- 11. Localização e contato -->
   <section class="secao fundo-linho" aria-labelledby="local-titulo">
     <div class="contem">
       <div class="cabecalho-secao" data-revelar>
@@ -751,11 +827,58 @@ const dados = [
     min-height: 44px;
   }
 
+  @media (min-width: 1024px) {
+    .esp-grupo-largo {
+      grid-column: 1 / -1;
+    }
+
+    .esp-grupo-largo ul {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0 3rem;
+    }
+
+    .esp-grupo-largo .esp-item + .esp-item {
+      border-top: 0;
+    }
+
+    .esp-grupo-largo .esp-item {
+      padding-bottom: 0;
+    }
+  }
+
   .esp-todas {
     margin-top: 2.5rem;
   }
 
-  /* ---------- 5. Cuidado integrado ---------- */
+  /* ---------- 5. Pessoas idosas ---------- */
+  .idosos-grade {
+    display: grid;
+    gap: clamp(2rem, 1.5rem + 2vw, 3rem);
+    align-items: center;
+  }
+
+  @media (min-width: 1024px) {
+    .idosos-grade {
+      grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+      gap: 5rem;
+    }
+  }
+
+  /* Arco da marca no canto da foto */
+  :global(.idosos-foto) {
+    border-radius: var(--raio-l) var(--raio-arco) var(--raio-l) var(--raio-l) !important;
+  }
+
+  .idosos-texto .lead {
+    margin-top: 1.25rem;
+  }
+
+  .idosos-texto .lista-marcada {
+    margin-block: 1.75rem 2rem;
+  }
+
+  /* ---------- 7. Cuidado integrado ---------- */
   .integrado {
     overflow: hidden;
   }

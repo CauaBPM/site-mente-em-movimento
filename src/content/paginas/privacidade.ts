@@ -14,7 +14,7 @@ export const privacidade = {
       'Como a Mente em Movimento, em Vila Velha – ES, trata os dados pessoais de quem visita o site e entra em contato, conforme a LGPD.',
   },
   h1: 'Política de *Privacidade*',
-  atualizadaEm: '2026-10-14',
+  atualizadaEm: '2026-10-22',
   aviso:
     'Não envie informações de saúde por este site; elas serão tratadas na consulta, com sigilo profissional.',
   secoes: [
@@ -83,7 +83,7 @@ export const privacidade = {
     {
       titulo: 'Como exercer seus direitos',
       paragrafos: [
-        'Entre em contato pelo WhatsApp (27) 99792-9358 ou presencialmente, no endereço da clínica, de segunda a sexta, das 8h às 18h30. Responderemos no prazo previsto na legislação. Você também pode apresentar reclamação à Autoridade Nacional de Proteção de Dados (ANPD).',
+        'Entre em contato pelo WhatsApp (27) 99792-9358 ou presencialmente, no endereço da clínica, de segunda a sexta, das 7h às 20h. Responderemos no prazo previsto na legislação. Você também pode apresentar reclamação à Autoridade Nacional de Proteção de Dados (ANPD).',
       ],
     },
     {

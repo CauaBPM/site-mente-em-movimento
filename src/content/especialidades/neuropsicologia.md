@@ -55,10 +55,10 @@ faq:
   - pergunta: O que é avaliado em uma avaliação neuropsicológica?
     resposta: Funções como memória, atenção, linguagem, raciocínio, organização e aprendizagem, além de aspectos de comportamento. O conjunto de testes é escolhido de acordo com a idade e a pergunta que motivou a avaliação.
   - pergunta: A avaliação neuropsicológica dá diagnóstico de TDAH ou de autismo?
-    resposta: A avaliação neuropsicológica contribui de forma importante para a investigação de TDAH e TEA, descrevendo o funcionamento cognitivo e comportamental. O diagnóstico é construído com a integração de informações clínicas e, quando necessário, com outros profissionais, como psiquiatra ou neurologista.
+    resposta: A avaliação neuropsicológica contribui de forma importante para a investigação de TDAH e TEA, descrevendo o funcionamento cognitivo e comportamental. O diagnóstico é construído com a integração de informações clínicas e, quando necessário, com outros profissionais, como o psiquiatra.
   - pergunta: A clínica emite laudo?
     resposta: Sim. A emissão de laudos e relatórios faz parte da avaliação neuropsicológica, quando indicada. O documento é entregue na devolutiva, com a explicação dos resultados.
-relacionadas: [psicopedagogia, psiquiatria, neurologia]
+relacionadas: [psicopedagogia, psiquiatria, psicologia]
 ---
 
 A neuropsicologia estuda a relação entre o funcionamento do cérebro e o comportamento: como pensamos, lembramos, prestamos atenção, aprendemos e tomamos decisões. O neuropsicólogo é um psicólogo com formação específica nessa área.

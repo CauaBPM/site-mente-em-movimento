@@ -20,7 +20,7 @@ quandoProcurar:
     - Vontade de se conhecer melhor e de cuidar da saúde mental de forma preventiva.
   aviso: O atendimento psicológico não depende de diagnóstico. Em uma situação de crise, procure ajuda imediata (CVV 188 ou SAMU 192).
 oferece:
-  intro: 'A psicologia é uma das cinco especialidades integradas da Mente em Movimento.'
+  intro: 'A psicologia é uma das especialidades integradas da Mente em Movimento.'
   blocos:
     - titulo: Atendimento psicológico
       texto: Espaço de escuta e de trabalho terapêutico conduzido por psicólogo, com sigilo profissional, ética e práticas baseadas em evidências científicas. Os objetivos e a frequência dos encontros são definidos com o paciente, em um plano individualizado.

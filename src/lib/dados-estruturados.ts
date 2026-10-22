@@ -7,7 +7,6 @@ import type { Profissional } from './conteudo';
 
 const especialidadeSchema: Record<string, string> = {
   psiquiatria: 'Psychiatric',
-  neurologia: 'Neurologic',
 };
 
 export function idClinica(site: URL | string) {
@@ -53,8 +52,8 @@ export function medicalClinic(site: URL | string, imagem: string, logo: string) 
         closes: clinica.horario.fecha,
       },
     ],
-    medicalSpecialty: ['Psychiatric', 'Neurologic'],
-    knowsAbout: [...clinica.especialidades],
+    medicalSpecialty: ['Psychiatric'],
+    knowsAbout: [...clinica.especialidades, ...clinica.servicos],
     areaServed: clinica.areaAtendida.map((cidade) => ({
       '@type': 'City',
       name: `${cidade}, ES`,

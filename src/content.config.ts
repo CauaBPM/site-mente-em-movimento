@@ -5,7 +5,6 @@ import { z } from 'astro/zod';
 const status = z.enum(['confirmado', 'pendente']);
 const slugsEspecialidades = z.enum([
   'psiquiatria',
-  'neurologia',
   'neuropsicologia',
   'psicologia',
   'psicopedagogia',

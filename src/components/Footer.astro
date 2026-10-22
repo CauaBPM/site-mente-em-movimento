@@ -5,6 +5,7 @@ import { clinica, confirmado } from '@/content/clinica';
 import { creditos } from '@/content/creditos';
 import { whatsappLink, telefoneHref } from '@/lib/whatsapp';
 import { especialidadesPublicadas, equipeConfirmada, rotaEspecialidade } from '@/lib/conteudo';
+import { servicos, rotaServico } from '@/content/servicos';
 
 const especialidades = await especialidadesPublicadas();
 const temEquipe = (await equipeConfirmada()).length > 0;
@@ -21,8 +22,9 @@ const ano = new Date().getFullYear();
         <Logo largura={200} placa />
       </a>
       <p>
-        Centro de saúde mental e cognitiva em Vila Velha – ES. Psiquiatria, neurologia,
-        neuropsicologia, psicologia e psicopedagogia para todas as idades.
+        Centro de saúde mental e cognitiva em Vila Velha – ES. Psiquiatria, neuropsicologia,
+        psicologia, psicopedagogia, reforço escolar e orientação parental para todas as idades.
+        Atendimento presencial, online e a domicílio.
       </p>
     </div>
 
@@ -94,6 +96,11 @@ const ano = new Date().getFullYear();
         {especialidades.map((e) => (
           <li class="sub">
             <a href={rotaEspecialidade(e.id)}>{e.data.nome}</a>
+          </li>
+        ))}
+        {servicos.map((s) => (
+          <li class="sub">
+            <a href={rotaServico(s.id)}>{s.nome}</a>
           </li>
         ))}
         {temEquipe && (

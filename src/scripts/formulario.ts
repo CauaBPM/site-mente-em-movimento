@@ -115,7 +115,7 @@ document.querySelectorAll<HTMLFormElement>('[data-formulario]').forEach((form) =
         form.reset();
         if (inicio) inicio.value = String(Date.now());
         retorno.innerHTML =
-          'Recebemos seu contato. <strong>A equipe vai retornar pelo telefone informado</strong>, de segunda a sexta, das 8h às 18h30.';
+          'Recebemos seu contato. <strong>A equipe vai retornar pelo telefone informado</strong>, de segunda a sexta, das 7h às 20h.';
         retorno.focus();
         registrarEvento('Envio do formulário', { pagina: location.pathname });
       } else if (resposta.status === 422 && corpo.erros) {

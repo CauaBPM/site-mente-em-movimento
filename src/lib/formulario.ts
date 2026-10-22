@@ -6,10 +6,11 @@
 
 export const AREAS = [
   'Psiquiatria',
-  'Neurologia',
   'Neuropsicologia',
   'Psicologia',
   'Psicopedagogia',
+  'Reforço escolar',
+  'Orientação parental',
   'Não sei, preciso de orientação',
 ] as const;
 

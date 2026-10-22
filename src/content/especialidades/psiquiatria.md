@@ -18,7 +18,7 @@ quandoProcurar:
     - Alterações importantes no sono, no apetite ou na energia.
     - Mudanças bruscas de humor ou de comportamento.
     - Dificuldades de atenção e de organização que persistem desde a infância.
-    - Indicação de outro profissional, como psicólogo, neurologista ou neuropsicólogo.
+    - Indicação de outro profissional, como médico, psicólogo ou neuropsicólogo.
   aviso: A lista não serve para autodiagnóstico. Se houver pensamentos de morte ou risco imediato, procure ajuda agora (CVV 188, SAMU 192 ou o pronto-socorro mais próximo).
 oferece:
   intro: 'A psiquiatria é uma especialidade médica. Na Mente em Movimento, a consulta psiquiátrica faz parte de um cuidado integrado com as demais áreas da clínica.'
@@ -28,7 +28,7 @@ oferece:
     - titulo: Acompanhamento
       texto: O cuidado em saúde mental costuma envolver consultas de retorno para observar a evolução e ajustar o plano. A frequência é definida pelo médico junto com o paciente.
     - titulo: Trabalho em conjunto
-      texto: Quando indicado, o acompanhamento psiquiátrico pode ser articulado com a psicologia, a neuropsicologia e a neurologia da própria clínica.
+      texto: Quando indicado, o acompanhamento psiquiátrico pode ser articulado com a psicologia e a neuropsicologia da própria clínica.
 comoFunciona:
   - titulo: Primeiro contato
     texto: Pelo WhatsApp, você agenda a consulta. Não é preciso relatar sintomas por mensagem.
@@ -47,7 +47,7 @@ faq:
     resposta: Não necessariamente. A indicação de medicamento depende da avaliação de cada caso e é sempre conversada com o paciente.
   - pergunta: Preciso de encaminhamento para a consulta?
     resposta: Não é obrigatório. Se você tiver encaminhamento, relatórios ou exames anteriores, leve-os à consulta.
-relacionadas: [psicologia, neurologia, neuropsicologia]
+relacionadas: [psicologia, neuropsicologia]
 ---
 
 A psiquiatria é a especialidade médica que cuida do diagnóstico, do tratamento e da prevenção dos transtornos mentais e emocionais, como depressão, ansiedade, transtorno bipolar e TDAH, entre outros.

@@ -4,7 +4,10 @@ import CabecalhoPagina from '@/components/CabecalhoPagina.astro';
 import Icone from '@/components/Icone.astro';
 import FAQ from '@/components/FAQ.astro';
 import ChamadaWhatsApp from '@/components/ChamadaWhatsApp.astro';
+import Ilustracao from '@/components/Ilustracao.astro';
+import Modalidades from '@/components/Modalidades.astro';
 import { atendimento } from '@/content/paginas/atendimento';
+import { modalidades } from '@/content/modalidades';
 import { faqPublicada } from '@/content/faq';
 import { whatsappLink, telefoneHref } from '@/lib/whatsapp';
 import { clinica } from '@/content/clinica';
@@ -18,6 +21,8 @@ const trilha = [
 const site = Astro.site!;
 
 const indice = [
+  { id: 'modalidades', titulo: 'Modalidades' },
+  { id: 'idosos', titulo: 'Pessoas idosas' },
   { id: 'como-agendar', titulo: 'Como agendar' },
   { id: 'o-que-levar', titulo: 'O que levar' },
   { id: 'sigilo', titulo: 'Sigilo e privacidade' },
@@ -49,17 +54,77 @@ const indice = [
     </nav>
   </CabecalhoPagina>
 
-  <section class="secao-compacta fundo-branco" aria-label="Modalidade e públicos">
+  <section class="secao-compacta fundo-branco" aria-label="Horário e públicos">
     <div class="contem resumo">
       <div class="resumo-item">
-        <Icone nome="clinica" tamanho={36} />
-        <h2 class="h3">{atendimento.modalidade.titulo}</h2>
-        <p>{atendimento.modalidade.texto}</p>
+        <Icone nome="relogio" tamanho={36} />
+        <h2 class="h3">{atendimento.horario.titulo}</h2>
+        <p>{atendimento.horario.texto}</p>
       </div>
       <div class="resumo-item">
         <Icone nome="equipe" tamanho={36} />
         <h2 class="h3">{atendimento.publicos.titulo}</h2>
         <p>{atendimento.publicos.texto}</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="modalidades" class="secao fundo-nevoa" aria-labelledby="modalidades-titulo">
+    <div class="contem">
+      <div class="cabecalho-secao" data-revelar>
+        <p class="sobretitulo">{modalidades.sobretitulo}</p>
+        <h2 id="modalidades-titulo" set:html={inline(modalidades.titulo)} />
+        <p class="lead">{modalidades.intro}</p>
+      </div>
+      <Modalidades origem="atendimento" />
+    </div>
+  </section>
+
+  <section id="idosos" class="secao fundo-branco" aria-labelledby="idosos-titulo">
+    <div class="contem idosos">
+      <div class="idosos-intro" data-revelar>
+        <p class="sobretitulo">{atendimento.idosos.sobretitulo}</p>
+        <h2 id="idosos-titulo" set:html={inline(atendimento.idosos.titulo)} />
+        <div class="texto">
+          {atendimento.idosos.texto.map((p) => (
+            <p>{p}</p>
+          ))}
+        </div>
+        <Ilustracao
+          ilustracao={atendimento.idosos.ilustracao}
+          sizes="(min-width: 1024px) 40vw, 100vw"
+          proporcao="16 / 10"
+          class="idosos-foto"
+        />
+      </div>
+      <div data-revelar>
+        <ul class="idosos-opcoes">
+          {atendimento.idosos.opcoes.map((o) => (
+            <li>
+              <h3>{o.titulo}</h3>
+              <p>{o.texto}</p>
+              <a class="link-seta" href={o.href}>
+                {o.rotulo}
+                <Icone nome="seta" />
+              </a>
+            </li>
+          ))}
+        </ul>
+        <p class="nota idosos-domicilio">
+          <Icone nome="casa" />
+          <span>{atendimento.idosos.domicilio}</span>
+        </p>
+        <a
+          class="botao botao-primario idosos-botao"
+          href={whatsappLink(atendimento.idosos.mensagemWhatsApp)}
+          rel="noopener"
+          target="_blank"
+          data-evento="whatsapp"
+          data-origem="atendimento-idosos"
+        >
+          <Icone nome="whatsapp" />
+          {atendimento.idosos.botao}
+        </a>
       </div>
     </div>
   </section>
@@ -231,6 +296,68 @@ const indice = [
   .resumo-item :global(.icone) {
     color: var(--mare);
     margin-bottom: 0.25rem;
+  }
+
+  .idosos {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    .idosos {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 5rem;
+      align-items: start;
+    }
+  }
+
+  .idosos-intro .texto {
+    margin-top: 1.25rem;
+  }
+
+  :global(.idosos-foto) {
+    margin-top: 2rem !important;
+  }
+
+  .idosos-opcoes {
+    display: grid;
+    gap: 1rem;
+    list-style: none;
+    padding: 0;
+  }
+
+  @media (min-width: 640px) {
+    .idosos-opcoes {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .idosos-opcoes li {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 1.5rem;
+    border-radius: var(--raio);
+    background: var(--linho);
+  }
+
+  .idosos-opcoes h3 {
+    font-size: 1.25rem;
+  }
+
+  .idosos-opcoes .link-seta {
+    margin-top: auto;
+  }
+
+  .idosos-domicilio {
+    margin-top: 1.5rem;
+    font-weight: 600;
+    color: var(--noturno);
+  }
+
+  .idosos-botao {
+    margin-top: 1.5rem;
   }
 
   .duas-colunas {

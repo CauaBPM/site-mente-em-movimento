@@ -44,12 +44,14 @@ export const clinica = {
   },
 
   horario: {
-    texto: 'Segunda a sexta, das 8h às 18h30',
-    curto: 'Seg. a sex., 8h–18h30',
+    texto: 'Segunda a sexta, das 7h às 20h',
+    /** Versão em minúsculas, para usar no meio de frases. */
+    frase: 'de segunda a sexta, das 7h às 20h',
+    curto: 'Seg. a sex., 7h–20h',
     observacao: 'Atendimento com hora marcada.',
     dias: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-    abre: '08:00',
-    fecha: '18:30',
+    abre: '07:00',
+    fecha: '20:00',
   },
 
   instagram: {
@@ -87,13 +89,19 @@ export const clinica = {
     valor: null,
   } as ItemPendente<{ nome: string; registro: string }[]>,
 
-  /** Atendimento online — só publicar com confirmação (e cadastro e-Psi para psicologia). */
-  atendimentoOnline: { status: 'pendente', valor: null } as ItemPendente<string>,
+  /**
+   * Modalidades de atendimento confirmadas pela clínica (out/2026): presencial, online e a domicílio.
+   * Disponibilidade por especialidade, plataforma do online e área/condições do domicílio
+   * NÃO foram informadas — o site orienta a consultar a equipe (ver PENDENCIAS.md).
+   */
+  modalidades: ['Presencial', 'Online', 'A domicílio'],
 
   /** Convênios aceitos — não publicar sem confirmação. */
   convenios: { status: 'pendente', valor: null } as ItemPendente<string[]>,
 
-  especialidades: ['Psiquiatria', 'Neurologia', 'Neuropsicologia', 'Psicologia', 'Psicopedagogia'],
+  especialidades: ['Psiquiatria', 'Neuropsicologia', 'Psicologia', 'Psicopedagogia'],
+  /** Serviços de apoio (sem página própria; descritos em src/content/servicos.ts). */
+  servicos: ['Reforço escolar', 'Orientação parental'],
   publicos: ['Crianças', 'Adolescentes', 'Adultos', 'Idosos'],
 
   /** Cidades atendidas (dados estruturados: areaServed). */

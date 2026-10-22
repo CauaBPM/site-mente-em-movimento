@@ -43,7 +43,7 @@ publicos:
   texto: O atendimento psicopedagógico acolhe diferentes fases da vida, porque aprender não é exclusividade da infância.
 faq:
   - pergunta: Qual a diferença entre psicopedagogia e reforço escolar?
-    resposta: O reforço escolar costuma revisar conteúdos. A psicopedagogia investiga como a pessoa aprende, o que dificulta esse processo e quais estratégias podem ajudar, trabalhando junto com a família e, quando possível, com a escola.
+    resposta: O reforço escolar apoia as atividades e a rotina de estudos. A psicopedagogia investiga como a pessoa aprende, o que dificulta esse processo e quais estratégias podem ajudar, trabalhando junto com a família e, quando possível, com a escola. A Mente em Movimento oferece os dois serviços, e a equipe orienta qual faz mais sentido para cada caso.
   - pergunta: Adultos e idosos também podem fazer acompanhamento psicopedagógico?
     resposta: Sim. A clínica oferece atendimento pedagógico e psicopedagógico para crianças, adultos e idosos, inclusive para quem deseja se alfabetizar ou retomar os estudos.
   - pergunta: Quando procurar a neuropsicologia em vez da psicopedagogia?

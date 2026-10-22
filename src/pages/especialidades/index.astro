@@ -4,9 +4,12 @@ import CabecalhoPagina from '@/components/CabecalhoPagina.astro';
 import Icone from '@/components/Icone.astro';
 import MarcadorArea from '@/components/MarcadorArea.astro';
 import ChamadaWhatsApp from '@/components/ChamadaWhatsApp.astro';
+import Ilustracao from '@/components/Ilustracao.astro';
 import { inicio } from '@/content/paginas/inicio';
+import { clinica } from '@/content/clinica';
+import { servicos } from '@/content/servicos';
 import { especialidadesPublicadas, rotaEspecialidade } from '@/lib/conteudo';
-import { whatsappLink } from '@/lib/whatsapp';
+import { whatsappLink, mensagemArea } from '@/lib/whatsapp';
 import { breadcrumbs } from '@/lib/dados-estruturados';
 
 const especialidades = await especialidadesPublicadas();
@@ -30,14 +33,14 @@ const site = Astro.site!;
 ---
 
 <BaseLayout
-  titulo="Especialidades em Vila Velha | Mente em Movimento"
-  descricao="Psiquiatria, neurologia, neuropsicologia, psicologia e psicopedagogia em Vila Velha – ES. Saiba quando procurar cada especialidade e como agendar."
+  titulo="Especialidades e serviços em Vila Velha | Mente em Movimento"
+  descricao="Psiquiatria, neuropsicologia, psicologia, psicopedagogia, reforço escolar e orientação parental em Vila Velha – ES. Saiba quando procurar e como agendar."
   caminho="/especialidades"
   dados={[breadcrumbs(site, trilha)]}
 >
   <CabecalhoPagina
-    h1="Especialidades em *Vila Velha*"
-    intro="Cinco áreas reunidas em um só endereço, na Praia das Gaivotas, para cuidar da saúde mental, da cognição e da aprendizagem em todas as idades."
+    h1="Especialidades e serviços em *Vila Velha*"
+    intro="Quatro especialidades e dois serviços de apoio reunidos em um só endereço, na Praia das Gaivotas, para cuidar da saúde mental, da cognição e da aprendizagem em todas as idades."
     sobretitulo="Especialidades"
     trilha={trilha}
   />
@@ -49,7 +52,9 @@ const site = Astro.site!;
     >
       <div class="contem grupo-grade">
         <div class="grupo-cabecalho" data-revelar>
-          <p class="sobretitulo">{g.itens.length} especialidades</p>
+          <p class="sobretitulo">
+            {g.itens.length} {g.itens.length === 1 ? 'especialidade' : 'especialidades'}
+          </p>
           <h2 id={`grupo-${g.id}`}>{g.titulo}</h2>
           <p>{g.descricao}</p>
         </div>
@@ -79,6 +84,55 @@ const site = Astro.site!;
     </section>
   ))}
 
+  <section
+    class:list={['secao', grupos.length % 2 === 0 ? 'fundo-branco' : 'fundo-linho']}
+    aria-labelledby="servicos-titulo"
+  >
+    <div class="contem">
+      <div class="cabecalho-secao" data-revelar>
+        <p class="sobretitulo">Serviços de apoio</p>
+        <h2 id="servicos-titulo">Apoio a estudantes e famílias</h2>
+        <p>
+          Serviços que complementam as especialidades da clínica, para quem busca apoio na rotina de
+          estudos ou na rotina com os filhos.
+        </p>
+      </div>
+      <ul class="servicos">
+        {servicos.map((s) => (
+          <li id={s.id} class="servico" data-revelar>
+            <Ilustracao
+              ilustracao={s.ilustracao}
+              sizes="(min-width: 900px) 40vw, 100vw"
+              proporcao="3 / 2"
+            />
+            <div class="servico-corpo">
+              <MarcadorArea rotulo="Serviço de apoio" />
+              <h3>{s.nome}</h3>
+              <p>{s.descricao}</p>
+              <ul class="lista-marcada">
+                {s.itens.map((item) => (
+                  <li>{item}</li>
+                ))}
+              </ul>
+              <p class="servico-publico">{s.paraQuem}</p>
+              <a
+                class="botao botao-secundario"
+                href={whatsappLink(mensagemArea(s.termoWhatsApp))}
+                rel="noopener"
+                target="_blank"
+                data-evento="whatsapp"
+                data-origem={`servico-${s.id}`}
+              >
+                <Icone nome="whatsapp" />
+                Saber mais sobre {s.nome.toLowerCase()}
+              </a>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
   <section class="secao-compacta fundo-nevoa" aria-labelledby="duvida-titulo">
     <div class="contem duvida" data-revelar>
       <Icone nome="aviso" tamanho={40} />
@@ -107,7 +161,7 @@ const site = Astro.site!;
 
   <ChamadaWhatsApp
     titulo="Agende sua *consulta*"
-    texto="Atendimento presencial, de segunda a sexta, das 8h às 18h30, na Praia das Gaivotas, em Vila Velha."
+    texto={`Atendimento presencial, online e a domicílio, ${clinica.horario.frase}. A clínica fica na Praia das Gaivotas, em Vila Velha.`}
     origem="especialidades-final"
   />
 </BaseLayout>
@@ -194,6 +248,52 @@ const site = Astro.site!;
 
   .esp-linha .link-seta {
     color: var(--petroleo);
+  }
+
+  .servicos {
+    display: grid;
+    gap: 1.5rem;
+    list-style: none;
+    padding: 0;
+  }
+
+  @media (min-width: 900px) {
+    .servicos {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 2rem;
+    }
+  }
+
+  .servico {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: var(--raio-l);
+    background: var(--branco);
+    box-shadow: var(--sombra);
+    scroll-margin-top: 1.5rem;
+  }
+
+  .servico :global(.ilustracao) {
+    border-radius: 0;
+  }
+
+  .servico-corpo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    flex: 1;
+    padding: clamp(1.5rem, 1rem + 2vw, 2.25rem);
+  }
+
+  .servico-publico {
+    font-size: var(--fs-pequeno);
+    color: var(--ardosia);
+  }
+
+  .servico-corpo .botao {
+    margin-top: auto;
   }
 
   .duvida {

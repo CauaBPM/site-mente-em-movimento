@@ -4,6 +4,8 @@ import CabecalhoPagina from '@/components/CabecalhoPagina.astro';
 import Icone from '@/components/Icone.astro';
 import BlocoLocalizacao from '@/components/BlocoLocalizacao.astro';
 import ContactForm from '@/components/ContactForm.astro';
+import Modalidades from '@/components/Modalidades.astro';
+import { modalidades } from '@/content/modalidades';
 import { contato } from '@/content/paginas/contato';
 import { clinica } from '@/content/clinica';
 import { config } from '@/lib/config';
@@ -50,6 +52,17 @@ const site = Astro.site!;
           <p class="destaque-numero numeros">{clinica.telefone.exibicao}</p>
         </div>
       </div>
+    </div>
+  </section>
+
+  <section class="secao-compacta fundo-nevoa" aria-labelledby="modalidades-titulo">
+    <div class="contem">
+      <div class="cabecalho-secao">
+        <p class="sobretitulo">{modalidades.sobretitulo}</p>
+        <h2 id="modalidades-titulo" set:html={inline(modalidades.titulo)} />
+        <p>{modalidades.intro}</p>
+      </div>
+      <Modalidades origem="contato" />
     </div>
   </section>
 

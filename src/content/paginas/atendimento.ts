@@ -1,31 +1,77 @@
 /** TEXTOS DA PÁGINA /atendimento (a FAQ completa fica em src/content/faq.ts) */
+import { clinica } from '../clinica';
+import { ilustracoes } from '../ilustracoes';
+
 export const atendimento = {
   seo: {
     titulo: 'Atendimento em Vila Velha | Mente em Movimento',
     descricao:
-      'Como agendar, o que levar na primeira consulta, sigilo e perguntas frequentes sobre o atendimento da Mente em Movimento, em Vila Velha – ES.',
+      'Atendimento presencial, online e a domicílio em Vila Velha – ES, de segunda a sexta, das 7h às 20h. Como agendar, o que levar e perguntas frequentes.',
   },
   h1: 'Como funciona o *atendimento*',
   intro:
-    'Tudo o que você precisa saber antes da primeira consulta: como agendar, o que levar e como cuidamos das suas informações.',
+    'Tudo o que você precisa saber antes da primeira consulta: modalidades, como agendar, o que levar e como cuidamos das suas informações.',
 
-  modalidade: {
-    titulo: 'Atendimento presencial',
-    texto:
-      'O atendimento é presencial, com hora marcada, na Praia das Gaivotas, em Vila Velha – ES. A clínica funciona de segunda a sexta, das 8h às 18h30.',
+  horario: {
+    titulo: 'Horário de funcionamento',
+    texto: `${clinica.horario.texto}, com hora marcada. Atendimento presencial, online e a domicílio, conforme a disponibilidade de cada serviço.`,
   },
 
   publicos: {
     titulo: 'Quem atendemos',
     texto:
-      'Crianças, adolescentes, adultos e idosos, em cinco especialidades: psiquiatria, neurologia, neuropsicologia, psicologia e psicopedagogia. As faixas etárias de cada especialidade são informadas pela equipe no primeiro contato.',
+      'Crianças, adolescentes, adultos e idosos, em quatro especialidades (psiquiatria, neuropsicologia, psicologia e psicopedagogia) e nos serviços de reforço escolar e orientação parental. As faixas etárias de cada área são informadas pela equipe no primeiro contato.',
+  },
+
+  idosos: {
+    sobretitulo: 'Pessoas idosas',
+    titulo: 'Atendimento para pessoas *idosas*',
+    texto: [
+      'A Mente em Movimento atende pessoas idosas com atenção às necessidades individuais, ao bem-estar e à qualidade de vida. O cuidado é planejado com a pessoa, respeitando sua autonomia e sua história.',
+      'Familiares também podem entrar em contato para conhecer as opções. A equipe orienta qual acompanhamento faz mais sentido em cada situação.',
+    ],
+    opcoes: [
+      {
+        titulo: 'Avaliação cognitiva',
+        texto:
+          'Avaliação de memória, atenção, linguagem e raciocínio, com devolutiva e orientações.',
+        href: '/especialidades/neuropsicologia',
+        rotulo: 'Neuropsicologia',
+      },
+      {
+        titulo: 'Reabilitação e estimulação cognitiva',
+        texto:
+          'Atividades planejadas para exercitar funções cognitivas, com foco em autonomia e qualidade de vida.',
+        href: '/especialidades/neuropsicologia',
+        rotulo: 'Neuropsicologia',
+      },
+      {
+        titulo: 'Aprender e retomar os estudos',
+        texto:
+          'Alfabetização e apoio à aprendizagem para quem deseja ler, escrever ou voltar a estudar.',
+        href: '/especialidades/psicopedagogia',
+        rotulo: 'Psicopedagogia',
+      },
+      {
+        titulo: 'Saúde mental',
+        texto:
+          'Acompanhamento psicológico e consulta psiquiátrica. A equipe informa os profissionais que atendem pessoas idosas.',
+        href: '/especialidades/psicologia',
+        rotulo: 'Psicologia',
+      },
+    ],
+    domicilio:
+      'O atendimento também pode acontecer em casa ou online, conforme a disponibilidade de cada serviço, o que facilita o acesso de quem prefere ou precisa evitar deslocamentos.',
+    botao: 'Falar com a equipe pelo WhatsApp',
+    mensagemWhatsApp: 'Olá! Gostaria de informações sobre atendimento para uma pessoa idosa.',
+    ilustracao: ilustracoes.casalIdoso,
   },
 
   comoAgendar: {
     titulo: 'Como agendar',
     passos: [
-      'Envie uma mensagem pelo WhatsApp (27) 99792-9358 ou ligue no mesmo número, de segunda a sexta, das 8h às 18h30.',
-      'Informe o nome de quem será atendido, a especialidade desejada (ou peça orientação) e os melhores dias e horários para você.',
+      `Envie uma mensagem pelo WhatsApp ${clinica.telefone.exibicao} ou ligue no mesmo número, ${clinica.horario.frase}.`,
+      'Informe o nome de quem será atendido, a especialidade ou o serviço desejado (ou peça orientação), a modalidade de preferência (presencial, online ou a domicílio) e os melhores dias e horários para você.',
       'A equipe confirma a data, o horário e as orientações para a primeira consulta.',
     ],
     observacao:

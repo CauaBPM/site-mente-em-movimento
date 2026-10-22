@@ -7,7 +7,7 @@ export const aClinica = {
   },
   h1: 'A *Mente em Movimento*',
   intro:
-    'Um centro de saúde mental e cognitiva em Vila Velha – ES, que reúne cinco especialidades para cuidar de pessoas em todas as fases da vida.',
+    'Um centro de saúde mental e cognitiva em Vila Velha – ES, que reúne quatro especialidades e serviços de apoio para cuidar de pessoas em todas as fases da vida.',
 
   proposito: {
     sobretitulo: 'Propósito',
@@ -22,7 +22,8 @@ export const aClinica = {
     sobretitulo: 'Abordagem',
     titulo: 'Integrada e *humanizada*',
     texto: [
-      'Psiquiatria, neurologia, neuropsicologia, psicologia e psicopedagogia estão reunidas no mesmo endereço. Quando uma situação pede mais de um olhar, as áreas podem atuar de forma complementar, sempre com o consentimento do paciente.',
+      'Psiquiatria, neuropsicologia, psicologia e psicopedagogia estão reunidas no mesmo endereço, ao lado do reforço escolar e da orientação parental. Quando uma situação pede mais de um olhar, as áreas podem atuar de forma complementar, sempre com o consentimento do paciente.',
+      'O atendimento pode ser presencial, online ou a domicílio, conforme a disponibilidade de cada serviço.',
       'O cuidado é humanizado, ético e baseado em evidências científicas. Isso significa escutar com atenção, explicar com clareza e indicar apenas o que faz sentido para cada caso.',
     ],
     citacao: 'Cuidar é olhar para a pessoa de forma integral.',
@@ -35,17 +36,17 @@ export const aClinica = {
       {
         titulo: 'Crianças e adolescentes',
         texto:
-          'Aprendizagem, alfabetização, atenção e desenvolvimento, incluindo a avaliação de TDAH e TEA, com orientação aos pais e responsáveis.',
+          'Aprendizagem, alfabetização, reforço escolar, atenção e desenvolvimento, incluindo a avaliação de TDAH e TEA, com orientação parental aos pais e responsáveis.',
       },
       {
         titulo: 'Adultos',
         texto:
-          'Psicoterapia, consultas de psiquiatria e de neurologia e avaliação neuropsicológica de memória, atenção e raciocínio.',
+          'Psicoterapia, consultas de psiquiatria e avaliação neuropsicológica de memória, atenção e raciocínio.',
       },
       {
         titulo: 'Idosos e familiares',
         texto:
-          'Avaliação cognitiva e reabilitação cognitiva, com estímulo de memória, atenção, linguagem e raciocínio e foco em autonomia.',
+          'Avaliação cognitiva e reabilitação cognitiva, com estímulo de memória, atenção, linguagem e raciocínio e foco em autonomia. Atendimento também em casa ou online, conforme a disponibilidade.',
       },
       {
         titulo: 'Escolas e profissionais',

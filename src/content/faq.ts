@@ -42,7 +42,6 @@ export const faq: Pergunta[] = [
   {
     id: 'encaminhamento',
     status: 'confirmado',
-    inicio: true,
     pergunta: 'Preciso de encaminhamento?',
     resposta:
       'Não é obrigatório. Se você tiver um encaminhamento médico ou da escola, relatórios ou exames anteriores, leve-os à primeira consulta, porque ajudam o profissional a entender o caso.',
@@ -74,7 +73,7 @@ export const faq: Pergunta[] = [
     status: 'confirmado',
     pergunta: 'Vocês atendem idosos com esquecimentos?',
     resposta:
-      'Sim. A clínica oferece avaliação cognitiva para adultos e idosos e reabilitação cognitiva, que estimula memória, atenção, linguagem e raciocínio, com foco em autonomia e qualidade de vida. A neurologia também pode ajudar a investigar as queixas de memória. Veja [Neuropsicologia](/especialidades/neuropsicologia) e [Neurologia](/especialidades/neurologia).',
+      'Sim. A clínica oferece avaliação cognitiva para adultos e idosos e reabilitação cognitiva, que estimula memória, atenção, linguagem e raciocínio, com foco em autonomia e qualidade de vida. Familiares podem falar com a equipe para conhecer as opções. Veja [Neuropsicologia](/especialidades/neuropsicologia) e [Atendimento para pessoas idosas](/atendimento#idosos).',
   },
   {
     id: 'remarcar',
@@ -99,12 +98,20 @@ export const faq: Pergunta[] = [
       'Essas informações são passadas diretamente pela equipe. Fale conosco pelo WhatsApp para saber sobre formas de pagamento e convênios.',
   },
   {
-    // Resposta definitiva PENDENTE (atendimento online depende de confirmação e de cadastro e-Psi).
+    // Quais serviços atendem online ainda não foi detalhado pela clínica (ver PENDENCIAS.md).
     id: 'online',
     status: 'confirmado',
-    pergunta: 'Existe atendimento online?',
+    inicio: true,
+    pergunta: 'Existe atendimento online ou a domicílio?',
     resposta:
-      'O atendimento acontece presencialmente, na Praia das Gaivotas, em Vila Velha. Para saber sobre outras modalidades, fale com nossa equipe pelo WhatsApp.',
+      'Sim. Além do atendimento presencial na Praia das Gaivotas, em Vila Velha, a clínica oferece atendimento online e a domicílio. A disponibilidade varia conforme o serviço e o profissional, e as condições são combinadas com a equipe pelo WhatsApp.',
+  },
+  {
+    id: 'reforco-orientacao',
+    status: 'confirmado',
+    pergunta: 'A clínica oferece reforço escolar e orientação parental?',
+    resposta:
+      'Sim. O reforço escolar apoia as atividades e a rotina de estudos, e a orientação parental é um espaço para pais e responsáveis lidarem com os desafios da rotina familiar. Veja os detalhes em [Especialidades e serviços](/especialidades#reforco-escolar).',
   },
 ];
 

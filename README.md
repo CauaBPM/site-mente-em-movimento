@@ -3,7 +3,8 @@
 Site institucional estático feito com **Astro 7 + TypeScript**, CSS próprio a partir dos tokens da marca
 (`brand/06-Arquivos-Fonte/css/brand.css`) e quase nenhum JavaScript (1,3 KB gzip na página inicial).
 
-- Páginas: `/`, `/a-clinica`, `/especialidades`, `/especialidades/{psiquiatria|neurologia|neuropsicologia|psicologia|psicopedagogia}`,
+- Páginas: `/`, `/a-clinica`, `/especialidades`, `/especialidades/{psiquiatria|neuropsicologia|psicologia|psicopedagogia}`
+  (reforço escolar e orientação parental ficam em `/especialidades#reforco-escolar` e `#orientacao-parental`),
   `/atendimento`, `/contato`, `/politica-de-privacidade`, `404` e `/equipe` (só existe quando há profissional confirmado).
 - Tudo o que ainda depende da clínica está em **[PENDENCIAS.md](PENDENCIAS.md)**.
 - Ações de SEO local fora do código: **[CHECKLIST-SEO-LOCAL.md](CHECKLIST-SEO-LOCAL.md)**.
@@ -58,11 +59,14 @@ Todo o conteúdo editável fica em `src/content/`:
 
 | Arquivo               | Conteúdo                                                                                                                                                                               |
 | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `clinica.ts`          | Nome, endereço, telefone, horário, Instagram, links do Google, itens pendentes (e-mail, CNES, responsáveis técnicos, online, convênios)                                                |
+| `clinica.ts`          | Nome, endereço, telefone, horário, Instagram, links do Google, modalidades, itens pendentes (e-mail, CNES, responsáveis técnicos, convênios)                                           |
 | `especialidades/*.md` | Uma página por especialidade. O corpo do arquivo é a seção "O que é"; o resto (quando procurar, o que oferece, como funciona, públicos, FAQ, relacionadas, SEO) fica no cabeçalho YAML |
 | `faq.ts`              | Perguntas frequentes (`inicio: true` = aparece também na página inicial)                                                                                                               |
 | `paginas/*.ts`        | Textos das páginas Início, A clínica, Atendimento, Contato e Política de Privacidade                                                                                                   |
 | `equipe/*.md`         | Profissionais                                                                                                                                                                          |
+| `servicos.ts`         | Serviços de apoio (reforço escolar, orientação parental): `/especialidades`, página inicial e rodapé                                                                                   |
+| `modalidades.ts`      | Modalidades de atendimento (presencial, online, a domicílio): início, `/atendimento` e `/contato`                                                                                      |
+| `ilustracoes.ts`      | Imagens ilustrativas de banco (Pexels), com autor, link e licença; exibidas com a legenda "Imagem ilustrativa"                                                                         |
 | `fotos.ts`            | Fotos reais do espaço (galeria)                                                                                                                                                        |
 
 Regras de edição:
@@ -93,6 +97,9 @@ Regras de edição:
 - **Favicon:** hoje é um monograma neutro em Petróleo (não derivado da borboleta). Se a clínica quiser um ícone a partir do original, troque em
   `scripts/gerar-imagens.mjs`.
 - **Fotos:** veja as instruções em `src/content/fotos.ts`. Só fotos reais, autorizadas, sem pacientes. A galeria aparece sozinha quando houver fotos.
+- **Imagens ilustrativas:** ficam em `src/assets/ilustracoes/` e são registradas em `src/content/ilustracoes.ts` (autor, link e licença).
+  São cenas de banco de imagens, não a equipe nem pacientes da clínica, e aparecem com a legenda "Imagem ilustrativa".
+  Para trocar, salve um JPG com ~1600 px de largura e atualize `alt` e `fonte`; o Astro gera AVIF/WebP automaticamente.
 
 ## 7. Como publicar (Cloudflare Pages — recomendado)
 

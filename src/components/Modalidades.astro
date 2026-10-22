@@ -1,0 +1,126 @@
+---
+/** Cartões das modalidades de atendimento: presencial, online e a domicílio. */
+import Icone from './Icone.astro';
+import { modalidades } from '@/content/modalidades';
+import { whatsappLink } from '@/lib/whatsapp';
+
+interface Props {
+  /** Identifica a página nos eventos de clique (data-origem). */
+  origem: string;
+  /** Nível do título de cada cartão. */
+  nivel?: 'h3' | 'h2';
+}
+
+const { origem, nivel: Titulo = 'h3' } = Astro.props;
+---
+
+<ul class="modalidades">
+  {modalidades.itens.map((m) => (
+    <li class:list={['modalidade', `modalidade-${m.id}`]} data-revelar>
+      <span class="modalidade-icone">
+        <Icone nome={m.icone} tamanho={32} />
+      </span>
+      {m.selo && <p class="modalidade-selo">{m.selo}</p>}
+      <Titulo class="modalidade-titulo">{m.titulo}</Titulo>
+      <p>{m.texto}</p>
+      {m.link.tipo === 'externo' ? (
+        <a
+          class="link-seta"
+          href={m.link.href}
+          rel="noopener"
+          target="_blank"
+          data-evento={m.link.evento}
+          data-origem={`${origem}-modalidades`}
+        >
+          {m.link.rotulo}
+          <Icone nome="externo" />
+        </a>
+      ) : (
+        <a
+          class="link-seta"
+          href={whatsappLink(m.link.mensagem)}
+          rel="noopener"
+          target="_blank"
+          data-evento="whatsapp"
+          data-origem={`${origem}-modalidade-${m.id}`}
+          aria-label={`${m.link.rotulo} do atendimento ${m.titulo.toLowerCase()} pelo WhatsApp`}
+        >
+          {m.link.rotulo}
+          <Icone nome="seta" />
+        </a>
+      )}
+    </li>
+  ))}
+</ul>
+
+<style>
+  .modalidades {
+    display: grid;
+    gap: 1.25rem;
+    list-style: none;
+    padding: 0;
+  }
+
+  @media (min-width: 900px) {
+    .modalidades {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.5rem;
+    }
+  }
+
+  .modalidade {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: clamp(1.5rem, 1rem + 1.5vw, 2rem);
+    border-radius: var(--raio-l);
+    background: var(--branco);
+    border: 1px solid var(--linha);
+  }
+
+  .modalidade p {
+    color: var(--grafite);
+  }
+
+  .modalidade .link-seta {
+    margin-top: auto;
+  }
+
+  .modalidade-icone {
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--bruma);
+    color: var(--petroleo);
+  }
+
+  .modalidade-titulo {
+    font-size: var(--fs-h3);
+  }
+
+  /* A domicílio: destaque discreto, pela relevância para idosos e familiares */
+  .modalidade-domicilio {
+    border: 2px solid var(--petroleo);
+  }
+
+  .modalidade-domicilio .modalidade-icone {
+    background: var(--petroleo);
+    color: var(--branco);
+  }
+
+  .modalidade-selo {
+    position: absolute;
+    top: clamp(1.5rem, 1rem + 1.5vw, 2rem);
+    right: clamp(1.5rem, 1rem + 1.5vw, 2rem);
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    background: var(--bruma);
+    font-weight: 700;
+    font-size: 0.8125rem;
+    color: var(--noturno) !important;
+  }
+</style>

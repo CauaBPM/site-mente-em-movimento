@@ -12,7 +12,7 @@ Ações fora do código que ajudam a clínica a ser encontrada em buscas locais.
 Mente em Movimento – Centro de Saúde Mental e Cognitiva
 Rua Sebastião Silveira, 24 – Praia das Gaivotas, Vila Velha – ES, 29102-571
 (27) 99792-9358
-Segunda a sexta, 8h às 18h30
+Segunda a sexta, 7h às 20h
 ```
 
 ## Perfil da Empresa no Google (Google Maps)
@@ -21,8 +21,9 @@ Segunda a sexta, 8h às 18h30
 - [ ] Preencher o campo **Website** com o domínio do site (hoje o perfil mostra "Adicionar website").
 - [ ] Conferir nome, endereço, telefone e horário exatamente como no bloco acima.
 - [ ] Categoria principal: escolher a mais próxima da atividade (por exemplo, "Centro de saúde mental" ou "Clínica médica"). Acrescentar
-      categorias secundárias apenas para serviços realmente oferecidos (por exemplo, "Psicólogo", "Psiquiatra", "Neurologista", "Psicopedagogo").
-- [ ] Descrição do perfil citando as 5 especialidades, os públicos e "Vila Velha".
+      categorias secundárias apenas para serviços realmente oferecidos (por exemplo, "Psicólogo", "Psiquiatra", "Psicopedagogo").
+- [ ] Descrição do perfil citando as 4 especialidades, o reforço escolar, a orientação parental, as modalidades (presencial, online e a domicílio), os públicos e "Vila Velha".
+- [ ] **Atualizar o horário no perfil para 7h às 20h** (segunda a sexta) e remover a neurologia de serviços/categorias, se constar.
 - [ ] Publicar **fotos reais** da fachada, recepção e espaço lúdico (sem pacientes).
 - [ ] Atributos: agendamento obrigatório, acessibilidade (se houver), espaço para crianças.
 - [ ] **Responder a todas as avaliações** com cordialidade, **sem mencionar dados de saúde** nem confirmar que a pessoa é paciente (sigilo).
@@ -47,8 +48,9 @@ Segunda a sexta, 8h às 18h30
 ## Palavras-chave candidatas (validar no Planejador de Palavras-chave e no Search Console)
 
 clínica de saúde mental Vila Velha · avaliação neuropsicológica Vila Velha · neuropsicólogo Vila Velha · psiquiatra Vila Velha ·
-neurologista Vila Velha · psicólogo Vila Velha · psicopedagogo Vila Velha · avaliação TDAH Vila Velha · avaliação autismo Vila Velha ·
-reabilitação cognitiva idosos Vila Velha · Praia das Gaivotas.
+psicólogo Vila Velha · psicopedagogo Vila Velha · avaliação TDAH Vila Velha · avaliação autismo Vila Velha ·
+reabilitação cognitiva idosos Vila Velha · atendimento domiciliar idosos Vila Velha · reforço escolar Vila Velha ·
+orientação parental Vila Velha · Praia das Gaivotas.
 
 ## Outros canais
 

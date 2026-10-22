@@ -138,7 +138,7 @@ const site = Astro.site!;
 
   <ChamadaWhatsApp
     titulo="Venha nos *conhecer*"
-    texto="Atendimento com hora marcada, de segunda a sexta, das 8h às 18h30, na Praia das Gaivotas, em Vila Velha."
+    texto={`Atendimento com hora marcada, ${clinica.horario.frase}, na Praia das Gaivotas, em Vila Velha, e também online ou a domicílio.`}
     origem="a-clinica-final"
   />
 </BaseLayout>
