@@ -11,10 +11,19 @@ O site é estático no GitHub Pages. Não há autenticação, banco de dados ou 
 
 Não foi identificada, nos arquivos inspecionados, chave de API ou senha em texto claro. Isso **não equivale** a uma varredura integral do histórico ou a ausência comprovada de segredos.
 
+## Resultados da primeira execução real de CI (10/11/2026)
+
+A execução do workflow na PR #1 concluiu **instalação, verificação de tipos, lint, build e verificação da distribuição com sucesso**, mas **reprovou** em `npm audit --audit-level=high`.
+
+O comando identificou **12 vulnerabilidades (1 alta e 11 moderadas)** na árvore de dependências instalada pelo lockfile: `undici` (alta: vários advisories, incluindo GHSA-4qv8-2p9j-2685), `fast-uri` (moderadas) e `minimatch` (moderada; também transitiva por ESLint/typescript-eslint). O npm reportou correção disponível via `npm audit fix` para `undici` e `fast-uri`; para alguns caminhos de `minimatch` sugeriu `--force` com mudança potencialmente incompatível em ESLint. **Não executar `--force` sem revisão técnica e testes.** Essas dependências podem estar restritas a tooling/build; a presença na árvore não prova exploração pelo site estático publicado. Ver execução: https://github.com/CauaBPM/site-mente-em-movimento/actions/runs/42840320134.
+
+**Próxima correção prioritária:** atualizar lockfile e versões compatíveis para remover o alerta alto de `undici`, executar `npm ci`, `npm run qa` e `npm audit`, e conferir se `minimatch` requer atualização coordenada das ferramentas de lint. Manter o check de auditoria bloqueante até resolver ou justificar formalmente um risco residual.
+
 ## Achados priorizados
 
 | ID | Severidade | Achado | Evidência e efeito | Ação |
 | --- | --- | --- | --- | --- |
+| S-00 | **Alta (dependências)** | `npm audit` identificou vulnerabilidades atuais no lockfile (12 alertas, incluindo 1 alto em `undici`). | CI de 10/11/2026, execução 42840320134. O QA passou e o passo de audit falhou. | Atualizar dependências e lockfile sem `--force` cego; validar nova execução e separar dependências de build das de produção. |
 | S-01 | **Alta, condicional** | Formulário capta `area` (Psiquiatria, Psicologia etc.) e `paraQuem`; a política diz que não coleta informações de saúde. | `src/lib/formulario.ts`, `src/components/ContactForm.astro`, `src/content/paginas/privacidade.ts`. Mesmo sem campo livre, a especialidade solicitada pode revelar dado pessoal sensível ou inferências de saúde. **Formulário atualmente desligado.** | Antes de ativar, minimizar campos (preferível nome, contato e período), revisar base legal, transparência, retenção de e-mails, fornecedores e LGPD com responsável jurídico. Não habilitar sem essa revisão. |
 | S-02 | **Média, condicional** | Rate limiting em memória é por instância e mantém IPs sem limpeza periódica/cota de entradas. | `functions/api/contato.ts`: `Map` global. Ataques distribuídos podem escapar do controle; diferentes IPs podem aumentar uso de memória. **API não executa no GH Pages.** | Exigir binding `RATE_LIMITER` ou regra gerenciada na hospedagem antes de ativar formulário; remover ou limitar o fallback em memória. |
 | S-03 | **Média** | GitHub Pages não permite aplicar alguns cabeçalhos HTTP de segurança customizados. | `integrations/cabecalhos-seguranca.mjs`; `SEGURANCA.md`. A CSP via meta não suporta `frame-ancestors`; sem cabeçalho anti-clickjacking customizado. | Para domínio definitivo, usar Cloudflare Pages/CDN com headers HTTP e conferir resposta real via navegador/curl. |
@@ -37,7 +46,8 @@ Não foi identificada, nos arquivos inspecionados, chave de API ou senha em text
 
 ## Checklist para concluir a auditoria operacional
 
-- [ ] Conferir o resultado do novo workflow `security-qa.yml` (QA + `npm audit`) e corrigir falhas.
+- [x] Conferir primeira execução do workflow: QA passou; npm audit encontrou 12 vulnerabilidades (1 alta, 11 moderadas).
+- [ ] Corrigir dependências, atualizar lockfile e obter `npm audit --audit-level=high` aprovado.
 - [ ] Executar secret scanning com histórico completo (por exemplo gitleaks/trufflehog em clone completo) e revisar alertas nativos do GitHub.
 - [ ] Verificar no GitHub as regras da branch principal, permissões de terceiros, segredos de Actions, Dependabot e proteção contra push de segredos.
 - [ ] Conferir domínio, DNS, HTTPS, CSP real, HSTS e headers do **site definitivo**, não só da prévia no GitHub Pages.
