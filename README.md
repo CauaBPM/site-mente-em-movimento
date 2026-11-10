@@ -1,14 +1,48 @@
-# Site — Mente em Movimento · Centro de Saúde Mental e Cognitiva (Vila Velha – ES)
+<div align="center">
 
-Site institucional estático feito com **Astro 7 + TypeScript**, CSS próprio a partir dos tokens da marca
-(`brand/06-Arquivos-Fonte/css/brand.css`) e quase nenhum JavaScript (1,3 KB gzip na página inicial).
+# 🧠 Mente em Movimento
 
-- Páginas: `/`, `/a-clinica`, `/especialidades`, `/especialidades/{psiquiatria|neuropsicologia|psicologia|psicopedagogia}`
-  (reforço escolar e orientação parental ficam em `/especialidades#reforco-escolar` e `#orientacao-parental`),
-  `/atendimento`, `/contato`, `/politica-de-privacidade`, `404` e `/equipe` (só existe quando há profissional confirmado).
-- Tudo o que ainda depende da clínica está em **[PENDENCIAS.md](PENDENCIAS.md)**.
-- Ações de SEO local fora do código: **[CHECKLIST-SEO-LOCAL.md](CHECKLIST-SEO-LOCAL.md)**.
-- Segurança (CSP, cabeçalhos, limites do GitHub Pages, segredos): **[SEGURANCA.md](SEGURANCA.md)**.
+**Centro de Saúde Mental e Cognitiva · Vila Velha, Espírito Santo**
+
+Site institucional desenvolvido com foco em acessibilidade, desempenho, privacidade e uma experiência acolhedora para quem busca informações sobre os serviços da clínica.
+
+[**Conheça o projeto**](#sobre-o-projeto) · [**Tecnologias**](#tecnologias) · [**Como executar**](#1-requisitos) · [**Documentação**](#documentação)
+
+</div>
+
+---
+
+## Sobre o projeto
+
+Plataforma institucional estática que apresenta especialidades, modalidades de atendimento e informações de contato. O conteúdo é administrado por arquivos estruturados, permitindo atualizações consistentes sem depender de um CMS.
+
+**Principais recursos**
+
+- Páginas para psicologia, psiquiatria, neuropsicologia e psicopedagogia.
+- Informações sobre atendimento presencial, online e domiciliar, reforço escolar e orientação parental.
+- Layout responsivo, navegação acessível e atenção a leitores de tela.
+- SEO local, metadados, sitemap e dados estruturados.
+- Carregamento consentido do mapa, política de privacidade e formulário preparado para hospedagem compatível.
+- Verificações automatizadas de qualidade, acessibilidade e segurança.
+
+## Tecnologias
+
+![Astro](https://img.shields.io/badge/Astro-7-BC52EE?logo=astro&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-22%2B-5FA04E?logo=node.js&logoColor=white)
+![License](https://img.shields.io/badge/Status-Projeto%20institucional-64748B)
+
+Construído com **Astro 7**, **TypeScript**, CSS próprio baseado na identidade visual da clínica e JavaScript mínimo no navegador.
+
+## Documentação
+
+| Documento | Conteúdo |
+| --- | --- |
+| [Pendências](docs/PENDENCIAS.md) | Informações que ainda dependem de confirmação da clínica |
+| [Segurança](docs/SEGURANCA.md) | CSP, hospedagem, privacidade e práticas de proteção |
+| [Checklist de SEO local](docs/CHECKLIST-SEO-LOCAL.md) | Ações para presença em mecanismos de busca e mapas |
+
+> **Atenção:** informações sobre profissionais, convênios e outros dados dependentes de validação não devem ser publicados antes da confirmação da clínica.
 
 ---
 
