@@ -105,8 +105,33 @@ class CorpoGrandeDemais extends Error {}
  * (o cabeçalho Content-Length pode estar ausente ou ser falso).
  */
 async function ler(request: Request): Promise<Record<string, unknown>> {
-  const bruto = await request.text();
-  if (new TextEncoder().encode(bruto).length > TAMANHO_MAXIMO) throw new CorpoGrandeDemais();
+  // Limite durante a leitura: request.text() primeiro alocava o corpo inteiro
+  // antes de verificar seu tamanho, permitindo consumo excessivo de memória.
+  if (!request.body) throw new Error('corpo');
+  const leitor = request.body.getReader();
+  const partes: Uint8Array[] = [];
+  let total = 0;
+  try {
+    while (true) {
+      const { done, value } = await leitor.read();
+      if (done) break;
+      total += value.byteLength;
+      if (total > TAMANHO_MAXIMO) throw new CorpoGrandeDemais();
+      partes.push(value);
+    }
+  } catch (erro) {
+    await leitor.cancel().catch(() => {});
+    throw erro;
+  } finally {
+    leitor.releaseLock();
+  }
+  const bytes = new Uint8Array(total);
+  let deslocamento = 0;
+  for (const parte of partes) {
+    bytes.set(parte, deslocamento);
+    deslocamento += parte.byteLength;
+  }
+  const bruto = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
   const tipo = request.headers.get('Content-Type') ?? '';
   if (tipo.includes('application/json')) {
     const dados: unknown = JSON.parse(bruto);
@@ -122,14 +147,20 @@ async function ler(request: Request): Promise<Record<string, unknown>> {
   throw new Error('tipo');
 }
 
-/** Aceita apenas envios do próprio site. Origin ausente é tolerado (navegadores antigos). */
+/** Exige a mesma origem HTTPS, sem aceitar Origin ausente ou "null". */
 function origemPermitida(request: Request): boolean {
   const origem = request.headers.get('Origin');
-  if (!origem) return true;
+  if (!origem) return false;
   try {
-    return new URL(origem).host === new URL(request.url).host;
+    const esperada = new URL(request.url);
+    const recebida = new URL(origem);
+    return (
+      recebida.protocol === 'https:' &&
+      esperada.protocol === 'https:' &&
+      recebida.origin === esperada.origin
+    );
   } catch {
-    return false; // inclui "null" (iframes sandbox, arquivos locais)
+    return false;
   }
 }
 
@@ -162,7 +193,9 @@ export async function onRequestPost({ request, env }: Contexto): Promise<Respons
   // Honeypot e tempo mínimo: respostas "de sucesso" silenciosas para não orientar robôs
   const inicio = Number(entrada.inicio);
   if (String(entrada.site ?? '').trim() !== '') return json({ ok: true });
-  if (!Number.isFinite(inicio) || Date.now() - inicio < TEMPO_MINIMO_MS) return json({ ok: true });
+  if (!Number.isFinite(inicio) || inicio <= 0 || Date.now() - inicio < TEMPO_MINIMO_MS) {
+    return json({ ok: true });
+  }
 
   if (!(await turnstileValido(String(entrada.token ?? ''), ip, env.TURNSTILE_SECRET_KEY))) {
     return json({ erro: 'Não foi possível confirmar que você não é um robô.' }, 400);
